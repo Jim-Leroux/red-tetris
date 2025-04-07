@@ -120,5 +120,3 @@ red-tetris/
 ---
 
 ```
-
----# red-tetris
