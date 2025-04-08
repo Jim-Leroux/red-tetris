@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run dev
+    restart: unless-stopped
+
+  # frontend à ajouter ici

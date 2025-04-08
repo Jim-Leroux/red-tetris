@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Socket.IO</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  </head>
+  <body>
+    <h1>Socket.IO Test</h1>
+    <script>
+      const socket = io("http://localhost:3000");
+
+      socket.on("connect", () => {
+        console.log("✅ Connected:", socket.id);
+
+        // Test joinRoom
+        socket.emit("joinRoom", { username: "Jean", room: "room42" });
+
+        // Test startGame après 3 sec
+        setTimeout(() => {
+          socket.emit("startGame", { room: "room42" });
+        }, 3000);
+      });
+
+      socket.on("playerJoined", (data) => {
+        console.log("🧑‍🤝‍🧑 playerJoined:", data);
+      });
+
+      socket.on("gameStarted", () => {
+        console.log("🎮 gameStarted");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("❌ Disconnected");
+      });
+    </script>
+  </body>
+</html>
