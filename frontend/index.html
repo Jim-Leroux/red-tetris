@@ -1,37 +1,61 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Test Socket.IO</title>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  </head>
-  <body>
-    <h1>Socket.IO Test</h1>
-    <script>
-      const socket = io("http://localhost:3000");
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Socket.IO Test Client</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>Test Red Tetris Socket.IO</h1>
 
-      socket.on("connect", () => {
-        console.log("✅ Connected:", socket.id);
+  <label>Username: <input type="text" id="username" /></label><br/>
+  <label>Room: <input type="text" id="room" /></label><br/>
+  <button id="joinBtn">Join Room</button>
+  <button id="startBtn">Start Game</button>
 
-        // Test joinRoom
-        socket.emit("joinRoom", { username: "Jean", room: "room42" });
+  <h2>Players in Room:</h2>
+  <ul id="playerList"></ul>
 
-        // Test startGame après 3 sec
-        setTimeout(() => {
-          socket.emit("startGame", { room: "room42" });
-        }, 3000);
+  <script>
+    const socket = io("http://localhost:3000"); // Change to your IP if on another machine
+
+    document.getElementById("joinBtn").onclick = () => {
+      const username = document.getElementById("username").value;
+      const room = document.getElementById("room").value;
+
+      if (!username || !room) return alert("Please enter username and room");
+
+      socket.emit("joinRoom", { username, room });
+    };
+
+    document.getElementById("startBtn").onclick = () => {
+      const room = document.getElementById("room").value;
+      if (!room) return alert("Please enter a room first");
+
+      socket.emit("startGame", { room });
+    };
+
+    socket.on("connect", () => {
+      console.log("✅ Connected as", socket.id);
+    });
+
+    socket.on("updatePlayers", (players) => {
+      const list = document.getElementById("playerList");
+      list.innerHTML = "";
+      players.forEach(p => {
+        const li = document.createElement("li");
+        li.innerText = p.username;
+        list.appendChild(li);
       });
+    });
 
-      socket.on("playerJoined", (data) => {
-        console.log("🧑‍🤝‍🧑 playerJoined:", data);
-      });
+    socket.on("gameStarted", () => {
+      alert("🎮 Game has started!");
+    });
 
-      socket.on("gameStarted", () => {
-        console.log("🎮 gameStarted");
-      });
-
-      socket.on("disconnect", () => {
-        console.log("❌ Disconnected");
-      });
-    </script>
-  </body>
+    socket.on("disconnect", () => {
+      console.log("❌ Disconnected");
+    });
+  </script>
+</body>
 </html>

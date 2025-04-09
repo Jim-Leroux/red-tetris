@@ -120,3 +120,89 @@ red-tetris/
 ---
 
 ```
+
+# 📄 Red Tetris – API Socket.IO (Backend)
+
+> Cette documentation décrit les **événements Socket.IO** disponibles côté frontend pour interagir avec le serveur.
+
+---
+
+## 🔌 Connexion
+
+```js
+const socket = io("http://<IP_DU_BACKEND>:3000");
+```
+
+- Si le frontend est sur la même machine que le backend (Docker en local) : `localhost:3000`
+- Sinon, utiliser l’**IP locale ou publique** du backend
+
+---
+
+## 📥 Événements émis **par le client**
+
+| Événement        | Payload                              | Description                           |
+|------------------|---------------------------------------|---------------------------------------|
+| `joinRoom`       | `{ username: string, room: string }` | Rejoindre une salle de jeu            |
+| `startGame`      | `{ room: string }`                   | Démarrer la partie (côté leader)      |
+| `moveLeft`       | `{ room: string }`                   | Déplacer la pièce vers la gauche      |
+| `moveRight`      | `{ room: string }`                   | Déplacer la pièce vers la droite      |
+| `rotate`         | `{ room: string }`                   | Faire pivoter la pièce                |
+| `softDrop`       | `{ room: string }`                   | Faire descendre la pièce d’un cran    |
+| `hardDrop`       | `{ room: string }`                   | Laisser tomber la pièce immédiatement |
+
+---
+
+## 📤 Événements reçus **par le client**
+
+| Événement         | Payload                              | Description                             |
+|-------------------|---------------------------------------|-----------------------------------------|
+| `updatePlayers`   | `[ { username: string, socketId } ]` | Liste mise à jour des joueurs dans room |
+| `gameStarted`     | _none_                               | Déclenchement du début de partie        |
+| `gameOver`        | _none_                               | Fin de la partie pour la room           |
+| `gameState`       | `GameState` (voir ci-dessous)        | Mise à jour régulière de l’état de jeu  |
+
+---
+
+## 🎮 Structure du `gameState`
+
+```ts
+interface GameState {
+  grid: number[][]; // grille de 20x10 (0 = vide, 1 = rempli)
+  currentPiece: {
+    type: string;         // ex: 'T', 'O', etc.
+    rotationIndex: number;
+    shape: number[][];    // forme actuelle (0/1)
+  };
+  position: {
+    x: number;
+    y: number;
+  };
+}
+```
+
+---
+
+## ✅ Exemple : se connecter et rejoindre une partie
+
+```js
+const socket = io("http://localhost:3000");
+
+socket.emit("joinRoom", {
+  username: "Alice",
+  room: "room42"
+});
+
+socket.on("updatePlayers", (players) => {
+  console.log("Players:", players);
+});
+
+socket.on("gameStarted", () => {
+  console.log("Game started!");
+});
+
+socket.on("gameState", (state) => {
+  console.log("Game state:", state);
+});
+```
+
+---

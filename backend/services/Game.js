@@ -1,0 +1,57 @@
+const { createGame } = require('../game/engine');
+
+const rooms = {};
+
+function addPlayerToRoom(socketId, username, room) {
+  if (!rooms[room]) {
+    rooms[room] = {
+      players: {},
+      game: null,
+    };
+  }
+
+  rooms[room].players[socketId] = {
+    username,
+    socketId,
+  };
+}
+
+function removePlayer(socketId) {
+  for (const room in rooms) {
+    if (rooms[room].players[socketId]) {
+      delete rooms[room].players[socketId];
+
+      // Supprimer room si vide
+      if (Object.keys(rooms[room].players).length === 0) {
+        if (rooms[room].game) rooms[room].game.stop();
+        delete rooms[room];
+      }
+
+      return room;
+    }
+  }
+  return null;
+}
+
+function getPlayersInRoom(room) {
+  return rooms[room] ? Object.values(rooms[room].players) : [];
+}
+
+function startGame(io, room) {
+  if (!rooms[room]) return;
+
+  rooms[room].game = createGame(io, room);
+  rooms[room].game.start();
+}
+
+function getGame(room) {
+  return rooms[room]?.game;
+}
+
+module.exports = {
+  addPlayerToRoom,
+  removePlayer,
+  getPlayersInRoom,
+  startGame,
+  getGame
+};
