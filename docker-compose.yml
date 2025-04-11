@@ -7,9 +7,22 @@ services:
       - "3000:3000"
     volumes:
       - ./backend:/app
-      - /app/node_modules
+      # - /app/node_modules
     working_dir: /app
     command: npm run dev
     restart: unless-stopped
 
-  # frontend à ajouter ici
+  frontend:
+    build: ./frontend
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./frontend:/app
+      # - /app/node_modules
+    working_dir: /app
+    command: npm start
+    restart: unless-stopped
+
+
+
+

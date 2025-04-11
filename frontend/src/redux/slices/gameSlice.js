@@ -1,0 +1,139 @@
+import { createSlice } from "@reduxjs/toolkit";
+import getRandomPiece from "../../logic/tetriminos";
+import { hasCollision } from "../../logic/collision";
+import fixPieceToGrid from "../../logic/fixation";
+import clearCompletedLines from "../../logic/lineUtils";
+
+const initialState = {
+	grid: Array(20).fill(Array(10).fill(0)),
+	activePiece: getRandomPiece(),
+	settings: {
+		progressiveSpeed: false,
+		fastGravity: false,
+		invisiblePieces: false,
+		reverseControls: false,
+		chaosMode: false
+	},
+	totalLinesCleared: 0,
+	linesClearedThisTurn: 0,
+	invisibleTick: 0,
+	isGameOver: false,
+};
+
+const gameSlice = createSlice({
+	name: 'game',
+	initialState,
+	reducers: {
+		setGrid(state, action) {
+			state.grid = action.payload;
+		},
+		setActivePiece(state, action) {
+			state.activePiece = action.payload;
+		},
+		setSetting(state, action) {
+			const { name, value } = action.payload;
+			state.settings[name] = value;
+		},
+		setGameOver(state, action) {
+			state.isGameOver = action.payload;
+		},
+		moveDown(state) {
+			const { shape, position } = state.activePiece;
+			const newPosition = { x: position.x, y: position.y + 1 };
+
+			if (!hasCollision(state.grid, shape, newPosition)) {
+				state.activePiece.position.y += 1;
+				state.invisibleTick += 1;
+
+				if (state.settings.chaosMode && Math.random() < 0.1) {
+					const random =  getRandomPiece();
+					state.activePiece.name = random.name;
+					state.activePiece.shape = random.shape;
+					state.activePiece.option = random.option;
+				}
+			} else {
+				state.grid = fixPieceToGrid(state.grid, shape, position, state.activePiece);
+				const result = clearCompletedLines(state.grid);
+				state.grid = result.grid;
+				state.totalLinesCleared += result.linesCleared;
+				state.linesClearedThisTurn = result.linesCleared;
+				const newPiece = getRandomPiece();
+				state.invisibleTick = 0;
+				if (hasCollision(state.grid, newPiece.shape, newPiece.position)) {
+					state.isGameOver = true;
+				} else {
+					state.activePiece = newPiece;
+				}
+			}
+		},
+		moveLeft(state) {
+			const { shape, position } = state.activePiece;
+			const newPosition = { x: position.x - 1, y: position.y };
+			if (!hasCollision(state.grid, shape, newPosition)) {
+				state.activePiece.position.x -= 1;
+			}
+		},
+		moveRight(state) {
+			const { shape, position } = state.activePiece;
+			const newPosition = { x: position.x + 1, y: position.y };
+			if (!hasCollision(state.grid, shape, newPosition)) {
+				state.activePiece.position.x += 1;
+			}
+		},
+		softDrop(state) {
+			const { shape, position } = state.activePiece;
+			const newPosition = { x: position.x, y: position.y + 1 };
+			if (!hasCollision(state.grid, shape, newPosition)) {
+				state.activePiece.position.y += 1;
+			}
+		},
+		rotate(state) {
+			const { shape, position } = state.activePiece;
+			const rotatedShape = shape[0].map((_, i) =>
+				shape.map(row => row[i]).reverse()
+			);
+			const newPosition = { ...position };
+			if (!hasCollision(state.grid, rotatedShape, newPosition)) {
+				state.activePiece.shape = rotatedShape;
+			}
+		},
+		hardDrop(state) {
+			const { shape, position } = state.activePiece;
+			let newY = position.y;
+
+			while (!hasCollision(state.grid, shape, { x: position.x, y: newY + 1 }))
+				newY++;
+			state.activePiece.position.y = newY;
+			state.grid = fixPieceToGrid(state.grid, shape, { x: position.x, y: newY }, state.activePiece);
+			const result = clearCompletedLines(state.grid);
+			state.grid = result.grid;
+			state.totalLinesCleared += result.linesCleared;
+			state.linesClearedThisTurn = result.linesCleared;
+			const newPiece = getRandomPiece();
+			state.invisibleTick = 0;
+			if (hasCollision(state.grid, newPiece.shape, newPiece.position)) {
+				state.isGameOver = true;
+			} else {
+				state.activePiece = newPiece;
+			}
+		},
+		resetGame(state) {
+			state.grid = Array(20).fill().map(() => Array(10).fill(0));
+			state.activePiece = getRandomPiece();
+			state.totalLinesCleared = 0;
+			state.linesClearedThisTurn = 0;
+			state.invisibleTick = 0;
+			state.isGameOver = false;
+		},
+		addGarbageLines(state, action) {
+			const numberOfLines = action.payload;
+			const garbageLine = Array(10).fill({ value: 9, option: { color: '#333' } });
+			const newLines = Array(numberOfLines).fill(garbageLine);
+			state.grid = [...state.grid.slice(numberOfLines), ...newLines];
+		}
+
+	},
+});
+
+export const { setGrid, setActivePiece, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, addGarbageLines } = gameSlice.actions;
+export default gameSlice.reducer;

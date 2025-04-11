@@ -4,15 +4,22 @@ const {
   getPlayersInRoom,
   startGame,
   getGame
-} = require('../services/gameService');
-
+} = require('../services/Game');
+const crypto = require('crypto');
 module.exports = (io, socket) => {
-  socket.on('joinRoom', ({ username, room }) => {
+  // j'ai rajouter ca ci desous je te laise regarde c'est juste pour cree une room name
+  socket.on('createRoom', ({ username, mode }, callback) => {
+    const room = crypto.randomUUID().split('-')[0];
+    callback(room);
+  });
+
+  socket.on('joinRoom', ({ username, room }, success) => {
     socket.join(room);
     addPlayerToRoom(socket.id, username, room);
 
     console.log(`${username} joined room ${room}`);
     io.to(room).emit('updatePlayers', getPlayersInRoom(room));
+    success(true);
   });
 
   socket.on('startGame', ({ room }) => {

@@ -1,0 +1,55 @@
+#root {
+	height: 100%;
+	/* margin: 0; */
+	display: flex;
+	flex-direction: column;
+  	z-index: 1;
+}
+
+body {
+  	margin: 0;
+  	font-family: 'Press Start 2P', sans-serif;
+  	letter-spacing: 0.5px;
+  	-webkit-font-smoothing: antialiased;
+  	-moz-osx-font-smoothing: grayscale;
+  	background: black url("./image.png") no-repeat center center fixed;
+  	background-size: cover;
+  	color: white;
+  	height: 100dvh;
+	overflow-x: hidden;
+	overflow-y: auto;
+  	position: relative; /* important */
+  	z-index: 0; /* le body devient le plan de fond */
+}
+
+body::after {
+	content: '';
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	background: radial-gradient(white 1px, transparent 1px),
+	            radial-gradient(white 1px, transparent 1px);
+	background-size: 3px 3px, 6px 6px;
+	animation: starDrift 60s linear infinite;
+	opacity: 0.07;
+	z-index: 0;
+}
+
+@keyframes starDrift {
+	0% { background-position: 0 0, 0 0; }
+	100% { background-position: 1000px 1000px, 500px 500px; }
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+	monospace;
+}
+
+main.main-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+  }
