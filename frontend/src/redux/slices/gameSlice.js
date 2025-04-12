@@ -7,6 +7,7 @@ import clearCompletedLines from "../../logic/lineUtils";
 const initialState = {
 	grid: Array(20).fill(Array(10).fill(0)),
 	activePiece: getRandomPiece(),
+	isStarted: false,
 	settings: {
 		progressiveSpeed: false,
 		fastGravity: false,
@@ -29,6 +30,9 @@ const gameSlice = createSlice({
 		},
 		setActivePiece(state, action) {
 			state.activePiece = action.payload;
+		},
+		setIsStarted(state, action) {
+			state.isStarted = action.payload;
 		},
 		setSetting(state, action) {
 			const { name, value } = action.payload;
@@ -124,6 +128,7 @@ const gameSlice = createSlice({
 			state.linesClearedThisTurn = 0;
 			state.invisibleTick = 0;
 			state.isGameOver = false;
+			state.isStarted = false;
 		},
 		addGarbageLines(state, action) {
 			const numberOfLines = action.payload;
@@ -135,5 +140,5 @@ const gameSlice = createSlice({
 	},
 });
 
-export const { setGrid, setActivePiece, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, addGarbageLines } = gameSlice.actions;
+export const { setGrid, setActivePiece, setIsStarted, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, addGarbageLines } = gameSlice.actions;
 export default gameSlice.reducer;

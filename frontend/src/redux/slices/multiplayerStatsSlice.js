@@ -13,20 +13,20 @@ const multiplayerStatsSlice = createSlice({
 	name: 'multiplayerStats',
 	initialState,
 	reducers: {
-		addPoints(state, action) {
+		addMultiplayerPoints(state, action) {
 			state.score += action.payload;
 		},
-		startTimer(state) {
+		startMultiplayerTimer(state) {
 			state.startTime = Date.now();
 		},
-		stopTimer(state) {
+		stopMultiplayerTimer(state) {
 			if (state.startTime) {
 				const duration = Date.now() - state.startTime;
 				state.totalTimePlayed += duration;
 				state.startTime = null;
 			}
 		},
-		registerGameEnd(state) {
+		registerMultiplayerGameEnd(state) {
 			state.lastScore = state.score;
 			if (state.score > state.highScore) {
 				state.highScore = state.score;
@@ -46,5 +46,5 @@ const multiplayerStatsSlice = createSlice({
 });
 
 
-export const { addPoints, startTimer, stopTimer, registerGameEnd, resetMultiplayerStats } = multiplayerStatsSlice.actions;
+export const { addMultiplayerPoints, startMultiplayerTimer, stopMultiplayerTimer, registerMultiplayerGameEnd, resetMultiplayerStats } = multiplayerStatsSlice.actions;
 export default multiplayerStatsSlice.reducer;

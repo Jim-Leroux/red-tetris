@@ -22,22 +22,22 @@ export default function Home() {
 
 	const handleStart = () => {
 		if (!username.trim()) return;
-		socket?.emit('createRoom', { username, mode} , (callback) => {
-			const room = callback;
-			socket?.emit('joinRoom', { username, room }, (success) => {
-				if (success) {
-					dispatch(setIsSolo(mode === 'solo'));
-					dispatch(setMe(username));
-					dispatch(setRoom(room));
-					dispatch(resetGame());
-					dispatch(mode === 'solo' ? resetSolo() : resetMultiplayerStats());
-					dispatch(setIsHost(mode === 'multi' && !roomName.trim()));
-					navigate(`/${room}/${username}`);
-				} else {
-					console.error('Failed to join room');
-				}
-			});
-		});
+		console.log('emit');
+		socket?.emit('joinRoom2', {username, mode, roomName}, (callback) => {
+			const { isHost, room } = callback;
+			console.log('callback', callback);
+			if (room) {
+				const test = mode === 'solo' ? true : false;
+				console.log('test', test);
+				dispatch(setIsSolo(test));
+				dispatch(setMe(username));
+				dispatch(setIsHost(isHost));
+				dispatch(setRoom(room));
+				dispatch(resetGame());
+				dispatch(mode === 'solo' ? resetSolo() : resetMultiplayerStats());
+				navigate(`/${room}/${username}`);
+			}
+		})
 	};
 
 	return (

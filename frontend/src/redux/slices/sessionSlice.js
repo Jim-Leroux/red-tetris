@@ -4,9 +4,9 @@ const initialState = {
 	room: null,
 	me: null,
 	isHost: false,
-	isSolo: true,
+	isSolo: false,
 	players: [],
-	spectres: {} 
+	spectres: {}
 };
 
 const sessionSlice =  createSlice({
@@ -39,7 +39,7 @@ const sessionSlice =  createSlice({
 			state.room = null;
 			state.me = null;
 			state.isHost = false;
-			state.isSolo = true;
+			state.isSolo = false;
 			state.players = [];
 			state.spectres = {};
 		}

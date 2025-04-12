@@ -13,21 +13,21 @@ const soloStatsSlice = createSlice({
 	name: 'solo',
 	initialState,
 	reducers: {
-		startTimer(state) {
+		startSoloTimer(state) {
 			state.startTime = Date.now();
 		},
-		stopTimer(state) {
+		stopSoloTimer(state) {
 			if (state.startTime) {
-			  const duration = Date.now() - state.startTime;
-			  state.totalTimePlayed += duration;
-			  localStorage.setItem('totalTimePlayed', state.totalTimePlayed);
-			  state.startTime = null;
+				const duration = Date.now() - state.startTime;
+				state.totalTimePlayed += duration;
+				localStorage.setItem('totalTimePlayed', state.totalTimePlayed);
+				state.startTime = null;
 			}
 		},
-		addPoints(state, action) {
+		addSoloPoints(state, action) {
 			state.score += action.payload
 		},
-		registerGameEnd(state) {
+		registerSoloGameEnd(state) {
 			state.lastScore = state.score;
 			if (state.score > state.highScore) {
 				state.highScore = state.score;
@@ -50,7 +50,7 @@ const soloStatsSlice = createSlice({
 			state.totalTimePlayed = parseInt(localStorage.getItem('totalTimePlayed')) || 0;
 			state.startTime = null;
 		},
-		resetStats(state) {
+		resetSoloStats(state) {
 			state.score = 0;
 			state.lastScore = 0;
 			state.highScore = 0;
@@ -61,6 +61,6 @@ const soloStatsSlice = createSlice({
 	},
 })
 
-export const { startTimer, stopTimer, addPoints, registerGameEnd, resetSolo, resetStats } = soloStatsSlice.actions;
+export const { startSoloTimer, stopSoloTimer, addSoloPoints, registerSoloGameEnd, resetSolo, resetSoloStats } = soloStatsSlice.actions;
 
 export default soloStatsSlice.reducer;

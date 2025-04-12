@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { registerGameEnd as endSolo } from '../redux/slices/soloStatsSlice';
-import { registerGameEnd as endMulti } from '../redux/slices/multiplayerStatsSlice';
+import { registerSoloGameEnd } from '../redux/slices/soloStatsSlice';
+import { registerMultiplayerGameEnd } from '../redux/slices/multiplayerStatsSlice';
 
 export default function useGameEnd() {
 	const dispatch = useDispatch();
@@ -12,9 +12,9 @@ export default function useGameEnd() {
 	useEffect(() => {
 		if (isGameOver) {
 			if (isSolo) {
-				dispatch(endSolo());
+				dispatch(registerSoloGameEnd());
 			} else {
-				dispatch(endMulti());
+				dispatch(registerMultiplayerGameEnd());
 			}
 		}
 	}, [isGameOver, isSolo, dispatch]);
