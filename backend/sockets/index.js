@@ -2,6 +2,8 @@ const {
   addPlayerToRoom,
   removePlayer,
   getPlayersInRoom,
+  setRoomSettings,
+  getRoomSettings,
   startGame,
   getGame
 } = require('../services/Game');
@@ -13,13 +15,25 @@ module.exports = (io, socket) => {
     callback(room);
   });
 
-  socket.on('joinRoom', ({ username, room }, success) => {
+  socket.on('joinRoom', ({ username, room }, callback) => {
     socket.join(room);
     addPlayerToRoom(socket.id, username, room);
 
     console.log(`${username} joined room ${room}`);
-    io.to(room).emit('updatePlayers', getPlayersInRoom(room));
-    success(true);
+    
+    const playersInRoom = getPlayersInRoom(room);
+
+    callback(true, playersInRoom);
+  });
+
+  socket.on('updateSettings', ({ room, settings }, callback) => {
+    setRoomSettings(room, settings);
+    console.log(`🎛 Settings updated for room ${room}:`, settings);
+  
+    // On peut renvoyer les settings à tout le monde dans la room si besoin
+    io.to(room).emit('settingsUpdated', getRoomSettings(room));
+  
+    callback(true);
   });
 
   socket.on('startGame', ({ room }) => {

@@ -48,10 +48,23 @@ function getGame(room) {
   return rooms[room]?.game;
 }
 
+function setRoomSettings(room, settings) {
+  if (rooms[room]) {
+    rooms[room].settings = settings;
+  }
+}
+
+function getRoomSettings(room) {
+  return rooms[room]?.settings || {};
+}
+
+
 module.exports = {
   addPlayerToRoom,
   removePlayer,
   getPlayersInRoom,
+  setRoomSettings,
+  getRoomSettings,
   startGame,
   getGame
 };
