@@ -7,7 +7,6 @@ services:
       - "3000:3000"
     volumes:
       - ./backend:/app
-      # - /app/node_modules
     working_dir: /app
     command: npm run dev
     restart: unless-stopped
@@ -22,7 +21,3 @@ services:
     working_dir: /app
     command: npm start
     restart: unless-stopped
-
-
-
-

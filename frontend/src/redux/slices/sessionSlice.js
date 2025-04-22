@@ -28,6 +28,9 @@ const sessionSlice =  createSlice({
 		setPlayers(state, action) {
 			state.players = action.payload;
 		},
+		addPlayers(state, action) {
+			state.players.push(action.payload);
+		},
 		setSpectre(state, action) {
 			const { player, spectre } = action.payload;
 			state.spectres[player] = spectre;
@@ -46,5 +49,5 @@ const sessionSlice =  createSlice({
 	},
 })
 
-export const { setRoom, setMe, setIsHost, setIsSolo, setPlayers, setSpectre, removeSpectre, resetSession } = sessionSlice.actions;
+export const { setRoom, setMe, setIsHost, setIsSolo, setPlayers, addPlayers, setSpectre, removeSpectre, resetSession } = sessionSlice.actions;
 export default sessionSlice.reducer;

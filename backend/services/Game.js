@@ -61,7 +61,6 @@ function getRoomSettings(room) {
   return rooms[room]?.settings || {};
 }
 
-
 module.exports = {
   addPlayerToRoom,
   removePlayer,

@@ -23,7 +23,7 @@ export default function GameOverOverlay() {
 
 	const handleReturnToLobby = () => {
 		navigate('/');
-		//  socket.emit('leave_room') 
+		//  socket.emit('leave_room')
 	};
 
 
@@ -44,7 +44,10 @@ export default function GameOverOverlay() {
 		}}>
 			<h1 style={{ color: 'white', fontSize: 48, marginBottom: 20 }}>💀 Game Over</h1>
 			{isSolo ? (
-				<button onClick={handleRetry} style={buttonStyle}>Rejouer</button>
+				<>
+					<button onClick={handleRetry} style={buttonStyle}>Rejouer</button>
+					<button onClick={handleReturnToLobby} style={buttonStyle}>Retour au Lobby</button>
+				</>
 			) : (
 				<>
 					<p style={{ color: 'white', marginBottom: 10 }}>

@@ -25,7 +25,7 @@ export default function Game() {
 	useTimer();
 	useGameEnd();
 	useSocketListeners();
-	
+
 	if (!isStarted && waitingToStart) {
 		return (<WaitingOverlay setWaitingToStart={setWaitingToStart} />);
 	}
@@ -35,7 +35,6 @@ export default function Game() {
 			<div className="game-box-horizontal">
 				<GameHUD />
 				<TetrisGrid />
-				<SettingsPanel />
 			</div>
 			<GameOverOverlay />
 			<SpecterPanel />

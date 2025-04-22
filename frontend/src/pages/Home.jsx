@@ -5,7 +5,7 @@ import ModeSelector from "../components/home/ModeSelector";
 import RoomInput from "../components/home/RoomInput";
 import StartButton from "../components/home/StartButton";
 import { useDispatch } from "react-redux";
-import { setIsSolo, setMe, setRoom, setIsHost } from "../redux/slices/sessionSlice";
+import { setIsSolo, setMe, setRoom, setIsHost, setPlayers } from "../redux/slices/sessionSlice";
 import { resetGame } from "../redux/slices/gameSlice";
 import { resetSolo } from "../redux/slices/soloStatsSlice";
 import { resetMultiplayerStats } from "../redux/slices/multiplayerStatsSlice";
@@ -23,18 +23,17 @@ export default function Home() {
 	const handleStart = () => {
 		if (!username.trim()) return;
 		console.log('emit');
-		socket?.emit('joinRoom2', {username, mode, roomName}, (callback) => {
-			const { isHost, room } = callback;
-			console.log('callback', callback);
-			if (room) {
-				const test = mode === 'solo' ? true : false;
-				console.log('test', test);
-				dispatch(setIsSolo(test));
+		socket?.emit('joinRoom', {username, mode, room: roomName}, (callback) => {
+			const { success, isHost, room, players } = callback;
+			console.log('callback', isHost	, room, players);
+			if (success) {
+				dispatch(setIsSolo(mode === 'solo' ? true : false));
 				dispatch(setMe(username));
 				dispatch(setIsHost(isHost));
 				dispatch(setRoom(room));
 				dispatch(resetGame());
 				dispatch(mode === 'solo' ? resetSolo() : resetMultiplayerStats());
+				mode === 'solo' ? null : dispatch(setPlayers(players));
 				navigate(`/${room}/${username}`);
 			}
 		})
