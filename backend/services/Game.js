@@ -3,7 +3,9 @@ const { createGame } = require('../game/engine');
 const rooms = {};
 
 function addPlayerToRoom(socketId, username, room) {
+	let isHost = false;
   if (!rooms[room]) {
+	isHost = true;
     rooms[room] = {
       players: {},
       game: null,
@@ -14,6 +16,7 @@ function addPlayerToRoom(socketId, username, room) {
     username,
     socketId,
   };
+  return isHost;
 }
 
 function removePlayer(socketId) {
@@ -57,7 +60,6 @@ function setRoomSettings(room, settings) {
 function getRoomSettings(room) {
   return rooms[room]?.settings || {};
 }
-
 
 module.exports = {
   addPlayerToRoom,

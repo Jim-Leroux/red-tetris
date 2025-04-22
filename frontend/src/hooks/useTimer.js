@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { startTimer as startSoloTimer, stopTimer as stopSoloTimer } from '../redux/slices/soloStatsSlice';
-import { startTimer as startMultiTimer, stopTimer as stopMultiTimer } from '../redux/slices/multiplayerStatsSlice';
+import { startSoloTimer,stopSoloTimer } from '../redux/slices/soloStatsSlice';
+import { startMultiplayerTimer, stopMultiplayerTimer } from '../redux/slices/multiplayerStatsSlice';
 
 export default function useTimer() {
 	const dispatch = useDispatch();
@@ -11,13 +11,13 @@ export default function useTimer() {
 		if (isSolo)
 			dispatch(startSoloTimer());
 		else
-			dispatch(startMultiTimer());
+			dispatch(startMultiplayerTimer());
 
 		return () => {
 			if (isSolo)
 				dispatch(stopSoloTimer());
 			else
-				dispatch(stopMultiTimer());
+				dispatch(stopMultiplayerTimer());
 		};
 	}, [dispatch, isSolo])
 }

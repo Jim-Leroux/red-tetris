@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addPoints as addSoloPoints } from '../redux/slices/soloStatsSlice';
-import { addPoints as addMultiPoints } from '../redux/slices/multiplayerStatsSlice';
+import { addSoloPoints } from '../redux/slices/soloStatsSlice';
+import { addMultiplayerPoints } from '../redux/slices/multiplayerStatsSlice';
 import getScoreForLines from '../logic/scoreUtils';
 
 export default function useScoreUpdater() {
@@ -15,7 +15,7 @@ export default function useScoreUpdater() {
 			if (isSolo) {
 				dispatch(addSoloPoints(points));
 			} else {
-				dispatch(addMultiPoints(points));
+				dispatch(addMultiplayerPoints(points));
 			}
 		}
 	}, [linesCleared, isSolo, dispatch]);
