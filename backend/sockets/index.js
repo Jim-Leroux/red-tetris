@@ -1,37 +1,40 @@
 const {
-	addPlayerToRoom,
-	removePlayer,
-	getPlayersInRoom,
-	startGame,
-	getGame
+  addPlayerToRoom,
+  removePlayer,
+  getPlayersInRoom,
+  setRoomSettings,
+  getRoomSettings,
+  startGame,
+  getGame
 } = require('../services/Game');
 const crypto = require('crypto');
 module.exports = (io, socket) => {
-	// j'ai rajouter ca ci desous je te laise regarde c'est juste pour cree une room name
-	socket.on('createRoom', ({ username, mode }, callback) => {
-		const room = crypto.randomUUID().split('-')[0];
-	callback(room);
-	});
-	// rerturn dans le joinRoom en callback si est le host de la partie true a bien rejoin est autre information
-	socket.on('joinRoom', ({ username, room }, success) => {
-		socket.join(room);
-		addPlayerToRoom(socket.id, username, room);
+  // j'ai rajouter ca ci desous je te laise regarde c'est juste pour cree une room name
+  socket.on('createRoom', ({ username, mode }, callback) => {
+    const room = crypto.randomUUID().split('-')[0];
+    callback(room);
+  });
 
-		console.log(`${username} joined room ${room}`);
-		io.to(room).emit('updatePlayers', getPlayersInRoom(room));
-		success(true);
-	});
+  socket.on('joinRoom', ({ username, room }, callback) => {
+    socket.join(room);
+    addPlayerToRoom(socket.id, username, room);
 
-	socket.on('joinRoom2', ({ username, mode, roomName }, callback) => {
-		const room = roomName || crypto.randomUUID().split('-')[0];
-		console.log(room);
-		socket.join(room);
-		let isHost = addPlayerToRoom(socket.id, username, room);
-		console.log(`${username} joined room ${room}`);
-		io.to(room).emit('updatePlayers', getPlayersInRoom(room));
+    console.log(`${username} joined room ${room}`);
 
-		callback({isHost, room});
-	})
+    const playersInRoom = getPlayersInRoom(room);
+
+    callback(true, playersInRoom);
+  });
+
+  socket.on('updateSettings', ({ room, settings }, callback) => {
+    setRoomSettings(room, settings);
+    console.log(`🎛 Settings updated for room ${room}:`, settings);
+
+    // On peut renvoyer les settings à tout le monde dans la room si besoin
+    io.to(room).emit('settingsUpdated', getRoomSettings(room));
+
+    callback(true);
+  });
 
 	socket.on('startGame', ({ room }) => {
 		startGame(io, room);
