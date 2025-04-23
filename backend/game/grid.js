@@ -48,11 +48,25 @@ function clearLines(grid) {
   return { newGrid, linesCleared };
 }
 
+function getSpecterData(grid) {
+	const height = Array(COLS).fill(ROWS);
+	for (let y = 0; y < COLS; y++) {
+		for (let x = 0; x < ROWS; x++) {
+			if (grid[x][y] !== 0) {
+				height[y] =ROWS - x;
+				break;
+			}
+		}
+	}
+	return height;
+}
+
 module.exports = {
   createGrid,
   isValidMove,
   mergePiece,
   clearLines,
   ROWS,
-  COLS
+  COLS,
+  getSpecterData
 };

@@ -68,6 +68,15 @@ export const TETRIMINOS = {
 	}
 };
 
+export function getNamePiece(name) {
+	return (
+		{	name,
+			shape: TETRIMINOS[name].shape,
+			position: { x: 3, y: 0},
+			option: TETRIMINOS[name].option,
+		});
+}
+
 export default function getRandomPiece() {
 	const keys = Object.keys(TETRIMINOS);
 	const name = keys[Math.floor(Math.random() *keys.length)]

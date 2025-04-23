@@ -1,0 +1,7 @@
+Alors ce que j'ai fais dans le backend j'ai modifier ton startGame pour au lieux de cree une grid par room le faire par joueur pour avoir les spectre par joueur
+ensuite le probleme sont les piece genere de base j'avais fait ca dasn le frontend mais c'est pas bon, il faut que ce sois le backend qui les envoie au frontend
+donc le backend doit avoir une sorte de queue pour envoyer au front c'est sur ca que je boss mais je galere un peut (beaucoup)
+ensuite il faudra mettre les option aussi dasn le backend est peut etre en metre moins pour le multi comme le mode chao qui change de piece au en plein dessans (a instaler ca vas etre la merde)
+
+
+le but la c'est les piece a envoyer les mem pour tout les joueur 

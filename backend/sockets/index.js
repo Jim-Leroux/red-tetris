@@ -5,8 +5,10 @@ const {
   setRoomSettings,
   getRoomSettings,
   startGame,
-  getGame
+  getGame,
+  getPlayerGame,
 } = require('../services/Game');
+
 const crypto = require('crypto');
 module.exports = (io, socket) => {
 	// donc j'ai modifier pour etre bien racort avec le front peut-etre a ameliorer !
@@ -37,27 +39,27 @@ module.exports = (io, socket) => {
 	});
 
 	socket.on('moveLeft', ({ room }) => {
-		const game = getGame(room);
+		const game = getPlayerGame(room, socket.id);
 		game?.move('left');
 	});
 
 	socket.on('moveRight', ({ room }) => {
-		const game = getGame(room);
+		const game = getPlayerGame(room, socket.id);
 		game?.move('right');
 	});
 
 	socket.on('rotate', ({ room }) => {
-		const game = getGame(room);
+		const game = getPlayerGame(room, socket.id);
 		game?.rotatePiece();
 	});
 
 	socket.on('softDrop', ({ room }) => {
-		const game = getGame(room);
+		const game = getPlayerGame(room, socket.id);
 		game?.softDrop();
 	});
 
 	socket.on('hardDrop', ({ room }) => {
-		const game = getGame(room);
+		const game = getPlayerGame(room, socket.id);
 		game?.hardDrop();
 	});
 

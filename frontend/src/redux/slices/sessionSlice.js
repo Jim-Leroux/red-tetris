@@ -6,7 +6,7 @@ const initialState = {
 	isHost: false,
 	isSolo: false,
 	players: [],
-	spectres: {}
+	spectres: {},
 };
 
 const sessionSlice =  createSlice({

@@ -12,7 +12,7 @@ export default function WaitingOverlay({ setWaitingToStart }) {
 	const players = useSelector((state) => state.session.players || []);
 	const settings = useSelector((state) => state.game.settings);
 	const settingsRef = useRef(settings);
-	const dispatch = useDispatch();       
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		settingsRef.current = settings;
