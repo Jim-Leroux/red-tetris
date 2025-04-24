@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Game from './pages/Game';
 import Header from './components/header';
 import Footer from './components/footer';
+import GameSolo from './pages/GameSolo';
 
 function App() {
 	const navigate = useNavigate();
@@ -30,6 +31,7 @@ function App() {
 			<main className='main-content'>
 				<Routes>
 					<Route path='/' element={<Home />} />
+					<Route path='/:name' element={<GameSolo />} />
 					<Route path="/:room/:name" element={<Game />} />
 					<Route path='/dashboard' element={<div>A faire</div>} />
 				</Routes>
