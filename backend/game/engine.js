@@ -1,5 +1,6 @@
+
 const { isValidMove, mergePiece, clearLines } = require('./grid');
-const { rotate } = require('./pieces');
+const { rotate, getRandomPiece } = require('/shared/tetriminos');
 
 /**
  * Crée et gère le cycle de vie du jeu pour une room multijoueur.

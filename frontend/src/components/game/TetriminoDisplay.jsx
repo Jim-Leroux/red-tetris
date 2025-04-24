@@ -1,5 +1,5 @@
 import React from "react";
-import { TETRIMINOS } from "../../logic/tetriminos";
+import { TETRIMINOS } from "/shared/tetriminos";
 
 const cellSize = 20;
 

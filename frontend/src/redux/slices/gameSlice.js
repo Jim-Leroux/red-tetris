@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import getRandomPiece from "../../logic/tetriminos";
+import getRandomPiece from "/shared/tetriminos";
 import { hasCollision } from "../../logic/collision";
 import fixPieceToGrid from "../../logic/fixation";
 import clearCompletedLines from "../../logic/lineUtils";

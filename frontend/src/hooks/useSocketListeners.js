@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addGarbageLines, pushPieceToQueue, setActivePiece, setIsStarted, setSetting } from "../redux/slices/gameSlice";
 import { addPiece, addPlayers, setPlayers, setSpectre } from "../redux/slices/sessionSlice";
 import { useSocket } from "../context/WebSocketContext";
-import { getNamePiece, TETRIMINOS } from "../logic/tetriminos";
+import { getNamePiece, TETRIMINOS } from "/shared/tetriminos";
 
 export default function useSocketListeners() {
 	const socket = useSocket();
