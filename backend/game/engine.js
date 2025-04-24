@@ -1,126 +1,160 @@
-const { getRandomPiece, rotate } = require('./pieces');
-const { createGrid, isValidMove, mergePiece, clearLines, ROWS, COLS, getSpecterData } = require('./grid');
+const { isValidMove, mergePiece, clearLines } = require('./grid');
+const { rotate } = require('./pieces');
 
+/**
+ * Crée et gère le cycle de vie du jeu pour une room multijoueur.
+ * @param {object} io - Instance Socket.IO
+ * @param {string} room - Identifiant de la room
+ * @param {object} players - Map des joueurs dans la room ({ socketId: playerState })
+ * @param {Array} sequence - Séquence partagée de pièces à distribuer
+ */
+function createGame(io, room, players, sequence) {
+  let interval = null;
 
-// ici du coup j'ai changer pour le currentPiece = null; ligne 27
-function createGame(io, room) {
-	let grid = createGrid();
-	let currentPiece = getRandomPiece();
-	let pieceX = 3;
-	let pieceY = 0;
-	let gameOver = false;
-	let interval = null;
-
-	function tick() {
-		if (gameOver) return;
-
-		// Tentative de descente
-		if (isValidMove(grid, currentPiece, pieceX, pieceY + 1)) {
-			pieceY++;
-		} else {
-			// Merge dans la grille
-			grid = mergePiece(grid, currentPiece, pieceX, pieceY);
-			const { newGrid, linesCleared } = clearLines(grid);
-			grid = newGrid;
-
-			// Nouvelle pièce
-			currentPiece = null;
-			pieceX = 3;
-			pieceY = 0;
-
-		// Si la nouvelle pièce est déjà bloquée → Game Over
-		if (!isValidMove(grid, currentPiece, pieceX, pieceY)) {
-			gameOver = true;
-			clearInterval(interval);
-			io.to(room).emit('gameOver');
-			return;
-		}
+	function nextPiece() {
+		return sequence.shift();
 	}
 
-    // État à envoyer aux clients
-    io.to(room).emit('gameState', {
-      grid,
-      currentPiece,
-      position: { x: pieceX, y: pieceY }
-    });
+  // Boucle principale du jeu, déclenchée à chaque 'tick'
+  function nextPiece() {
+	if (sequence.length < 10)
+		sequence = Array.from({ length: 100 }, () => getRandomPiece());
+	return sequence.shift();
   }
 
-  function move(dir) {
-    const offsetX = dir === 'left' ? -1 : 1;
-    if (isValidMove(grid, currentPiece, pieceX + offsetX, pieceY)) {
-      pieceX += offsetX;
-    }
+  function tick() {
+	const specters = {};
+
+	for (const socketId in players) {
+	  const player = players[socketId];
+	  if (!player.isAlive) continue;
+
+	  const { grid, currentPiece, pieceX, pieceY } = player;
+
+	  // Mouvement automatique
+	  if (isValidMove(grid, currentPiece, pieceX, pieceY + 1)) {
+		player.pieceY++;
+	  } else {
+		// Fixer la pièce
+		player.grid = mergePiece(grid, currentPiece, pieceX, pieceY);
+		const { newGrid } = clearLines(player.grid);
+		player.grid = newGrid;
+
+		// Déterminer l'index de la prochaine pièce
+		player.pieceIndex = (player.pieceIndex ?? 0) + 1;
+
+		// Étendre la séquence si besoin
+		if (sequence.length <= player.pieceIndex) {
+		  const extraPieces = Array.from({ length: 50 }, () => getRandomPiece());
+		  sequence.push(...extraPieces);
+		}
+
+		// Récupérer la prochaine pièce
+		const piece = sequence[player.pieceIndex];
+		player.currentPiece = piece;
+		player.pieceX = 3;
+		player.pieceY = 0;
+
+		if (!isValidMove(player.grid, piece, 3, 0)) {
+		  player.isAlive = false;
+		  io.to(socketId).emit('gameOver');
+		  console.log("Game Over for player", player.username);
+		  continue;
+		}
+
+		// Envoyer uniquement à CE joueur la nouvelle pièce
+		io.to(socketId).emit('nextPiece', piece);
+	  }
+
+	  // Spectre
+	  specters[socketId] = {
+		username: player.username,
+		name: player.currentPiece?.type,
+		shape: player.currentPiece?.shape,
+		position: { x: player.pieceX, y: player.pieceY },
+		grid: player.grid,
+	  };
+	}
+
+	io.to(room).emit('spectersUpdate', specters);
+
+	const alive = Object.values(players).some(p => p.isAlive);
+	if (!alive) {
+	  clearInterval(interval);
+	  io.to(room).emit('allPlayersGameOver');
+	}
   }
 
-  function softDrop() {
-    if (isValidMove(grid, currentPiece, pieceX, pieceY + 1)) {
-      pieceY += 1;
-    }
-  }
-
-  function rotatePiece() {
-    const rotated = rotate(currentPiece);
-    if (isValidMove(grid, rotated, pieceX, pieceY)) {
-      currentPiece = rotated;
-    }
-  }
-
-  function hardDrop() {
-    while (isValidMove(grid, currentPiece, pieceX, pieceY + 1)) {
-      pieceY += 1;
-    }
-    tick(); // forcer fusion + nouvelle pièce
-  }
 
   function start() {
-    interval = setInterval(tick, 1000);
+    interval = setInterval(tick, 500);
   }
 
   function stop() {
     clearInterval(interval);
   }
 
-  function getSpecterState() {
-	return {
-	  name: currentPiece.type,
-	  shape: currentPiece.shape,
-	  position: { x: pieceX, y: pieceY }
-	  // on n’envoie PAS option ici → le front s’en chargera via TETRIMINOS[name]
-	};
+  /**
+   * Déplacement horizontal de la pièce pour un joueur
+   * @param {'left'|'right'} dir
+   * @param {string} socketId
+   */
+  function move(dir, socketId) {
+    const player = players[socketId];
+    if (!player) return;
+    const offsetX = dir === 'left' ? -1 : 1;
+    if (isValidMove(player.grid, player.currentPiece, player.pieceX + offsetX, player.pieceY)) {
+      player.pieceX += offsetX;
+    }
   }
 
-
-  function setNextPiece(piece) {
-	currentPiece = piece;
-	pieceX = 3;
-	pieceY = 0;
-
-	if (!isValidMove(grid, currentPiece, pieceX, pieceY)) {
-	  gameOver = true;
-	  clearInterval(interval);
-	  io.to(room).emit('gameOver');
-	}
+  /**
+   * Rotation de la pièce pour un joueur
+   * @param {string} socketId
+   */
+  function rotatePiece(socketId) {
+    const player = players[socketId];
+    if (!player) return;
+    const rotated = rotate(player.currentPiece);
+    if (isValidMove(player.grid, rotated, player.pieceX, player.pieceY)) {
+      player.currentPiece = rotated;
+    }
   }
 
+  /**
+   * Descente rapide d'un joueur
+   * @param {string} socketId
+   */
+  function softDrop(socketId) {
+    const player = players[socketId];
+    if (!player) return;
+    if (isValidMove(player.grid, player.currentPiece, player.pieceX, player.pieceY + 1)) {
+      player.pieceY++;
+    }
+  }
+
+  /**
+   * Chute instantanée d'un joueur
+   * @param {string} socketId
+   */
+  function hardDrop(socketId) {
+    const player = players[socketId];
+    if (!player) return;
+    while (isValidMove(player.grid, player.currentPiece, player.pieceX, player.pieceY + 1)) {
+      player.pieceY++;
+    }
+    // Fusionner et passer à la prochaine pièce immédiatement
+    tick();
+  }
 
   return {
     start,
     stop,
     move,
+    rotate: rotatePiece,
     softDrop,
-    rotatePiece,
-    hardDrop,
-	tick,
-	getGrid: () => grid,
-	getCurrentPiece: () => currentPiece,
-	getPosition: () => ({ x: pieceX, y: pieceY }),
-	getGameOver: () => gameOver,
-	getSpecterData: () => getSpecterData(grid),
-	getSpecterState: () => getSpecterState(),
-	setNextPiece
+    hardDrop
   };
 }
 
-module.exports = {
-  createGame
-};
+module.exports = { createGame };

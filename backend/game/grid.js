@@ -1,20 +1,34 @@
 const ROWS = 20;
 const COLS = 10;
 
+/**
+ * Crée une grille vide de taille ROWS x COLS
+ */
 function createGrid() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 }
 
+/**
+ * Vérifie si le déplacement d'une pièce est valide sur la grille
+ * @param {number[][]} grid
+ * @param {object} piece
+ * @param {number} posX
+ * @param {number} posY
+ * @returns {boolean}
+ */
 function isValidMove(grid, piece, posX, posY) {
-  const shape = piece.shape;
+  const { shape } = piece;
   for (let y = 0; y < shape.length; y++) {
     for (let x = 0; x < shape[y].length; x++) {
       if (shape[y][x]) {
         const newY = posY + y;
         const newX = posX + x;
         if (
-          newY >= ROWS || newX < 0 || newX >= COLS ||
-          (newY >= 0 && grid[newY][newX] !== 0)
+          newY < 0 ||
+          newY >= ROWS ||
+          newX < 0 ||
+          newX >= COLS ||
+          (grid[newY][newX] !== 0)
         ) {
           return false;
         }
@@ -24,10 +38,17 @@ function isValidMove(grid, piece, posX, posY) {
   return true;
 }
 
+/**
+ * Fusionne une pièce dans la grille et retourne la nouvelle grille
+ * @param {number[][]} grid
+ * @param {object} piece
+ * @param {number} posX
+ * @param {number} posY
+ * @returns {number[][]}
+ */
 function mergePiece(grid, piece, posX, posY) {
   const newGrid = grid.map(row => row.slice());
-  const shape = piece.shape;
-
+  const { shape } = piece;
   for (let y = 0; y < shape.length; y++) {
     for (let x = 0; x < shape[y].length; x++) {
       if (shape[y][x]) {
@@ -35,30 +56,38 @@ function mergePiece(grid, piece, posX, posY) {
       }
     }
   }
-
   return newGrid;
 }
 
+/**
+ * Supprime les lignes complètes et retourne la nouvelle grille et le nombre de lignes effacées
+ * @param {number[][]} grid
+ * @returns {{ newGrid: number[][], linesCleared: number }}
+ */
 function clearLines(grid) {
-  const newGrid = grid.filter(row => row.some(cell => cell === 0));
-  const linesCleared = ROWS - newGrid.length;
-  while (newGrid.length < ROWS) {
-    newGrid.unshift(Array(COLS).fill(0));
+  const filtered = grid.filter(row => row.some(cell => cell === 0));
+  const linesCleared = ROWS - filtered.length;
+  while (filtered.length < ROWS) {
+    filtered.unshift(Array(COLS).fill(0));
   }
-  return { newGrid, linesCleared };
+  return { newGrid: filtered, linesCleared };
 }
 
-function getSpecterData(grid) {
-	const height = Array(COLS).fill(ROWS);
-	for (let y = 0; y < COLS; y++) {
-		for (let x = 0; x < ROWS; x++) {
-			if (grid[x][y] !== 0) {
-				height[y] =ROWS - x;
-				break;
-			}
-		}
-	}
-	return height;
+/**
+ * Calcule le spectre (hauteur) de chaque colonne dans la grille
+ * @param {number[][]} grid
+ * @returns {number[]}
+ */
+function calculateSpectre(grid) {
+  const spectre = [];
+  for (let x = 0; x < COLS; x++) {
+    let y = 0;
+    while (y < ROWS && grid[y][x] === 0) {
+      y++;
+    }
+    spectre.push(y === ROWS ? -1 : y);
+  }
+  return spectre;
 }
 
 module.exports = {
@@ -66,7 +95,7 @@ module.exports = {
   isValidMove,
   mergePiece,
   clearLines,
+  calculateSpectre,
   ROWS,
-  COLS,
-  getSpecterData
+  COLS
 };

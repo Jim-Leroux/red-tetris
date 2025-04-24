@@ -38,17 +38,19 @@ export default function useSocketListeners() {
 		socket.on('spectersUpdate', (specters) => {
 			// console.log("Specters updated", specters);
 			Object.entries(specters).forEach(([player, spectre]) => {
+				if (player == socket.id) return;
 				// console.log("Specter for player", player, spectre);
 				dispatch(setSpectre({ player, spectre }));
 			});
 		});
 
 		socket.on("nextPiece", (piece) => {
-			console.log("Next piece received", getNamePiece(piece.type));
+			console.log("Next piece received", piece);
 			dispatch(pushPieceToQueue(getNamePiece(piece.type)));
 		});
 
 		socket.on('piece', (piece) => {
+			console.log("Piece received", piece);
 			dispatch(setActivePiece(getNamePiece(piece.type)));
 		});
 

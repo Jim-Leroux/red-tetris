@@ -2,15 +2,21 @@ import React from "react";
 import { TETRIMINOS } from "../../logic/tetriminos";
 
 export default function Specter({ playerName, specterData }) {
-	if (!specterData || !specterData.name || !specterData.shape || !specterData.position) return null;
+	if (
+		!specterData ||
+		!specterData.name ||
+		!specterData.shape ||
+		!specterData.position ||
+		!specterData.grid
+	) return null;
 
-	const { name, shape, position } = specterData;
+	const { name, shape, position, grid: baseGrid } = specterData;
 	const color = TETRIMINOS[name]?.option?.color || "gray";
 
-	// Créer une grille vide 10x20
-	const grid = Array.from({ length: 20 }, () => Array(10).fill(null));
+	// Cloner la grille reçue (pour ne pas la muter)
+	const grid = baseGrid.map(row => [...row]);
 
-	// Dessiner la pièce dans la grille
+	// Dessiner la pièce active sur la grille (par-dessus les blocs fixés)
 	shape.forEach((row, dy) => {
 		row.forEach((cell, dx) => {
 			const x = position.x + dx;

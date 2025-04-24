@@ -11,9 +11,8 @@ export default function SpecterPanel() {
 	return (
 		<div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 20 }}>
 			{Object.entries(spectres)
-				.filter(([playerName]) => playerName !== me)
 				.map(([playerName, specterData]) => (
-					<Specter key={playerName} playerName={playerName} specterData={specterData} />
+					<Specter key={playerName} playerName={specterData.username} specterData={specterData} />
 			))}
 		</div>
 	);
