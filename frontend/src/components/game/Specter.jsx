@@ -1,5 +1,5 @@
 import React from "react";
-import { TETRIMINOS } from "/shared/tetriminos";
+import { TETRIMINOS } from "../../logic/tetriminos";
 
 export default function Specter({ playerName, specterData }) {
 	if (

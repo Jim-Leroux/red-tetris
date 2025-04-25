@@ -77,13 +77,15 @@ export function getNamePiece(name) {
 		});
 }
 
+export function rotate(shape) {
+	return shape[0].map((_, i) =>
+		shape.map(row => row[i]).reverse()
+	);
+}
+
+
 export default function getRandomPiece() {
 	const keys = Object.keys(TETRIMINOS);
 	const name = keys[Math.floor(Math.random() *keys.length)]
-	return (
-		{	name,
-			shape: TETRIMINOS[name].shape,
-			position: { x: 3, y: 0},
-			option: TETRIMINOS[name].option,
-		});
+	return (getNamePiece(name));
 }

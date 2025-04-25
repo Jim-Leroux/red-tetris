@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addGarbageLines, pushPieceToQueue, setActivePiece, setIsStarted, setSetting } from "../redux/slices/gameSlice";
 import { addPiece, addPlayers, setPlayers, setSpectre } from "../redux/slices/sessionSlice";
 import { useSocket } from "../context/WebSocketContext";
-import { getNamePiece, TETRIMINOS } from "/shared/tetriminos";
+import { getNamePiece } from "../logic/tetriminos";
+
 
 export default function useSocketListeners() {
 	const socket = useSocket();
@@ -46,12 +47,12 @@ export default function useSocketListeners() {
 
 		socket.on("nextPiece", (piece) => {
 			console.log("Next piece received", piece);
-			dispatch(pushPieceToQueue(getNamePiece(piece.type)));
+			dispatch(pushPieceToQueue(getNamePiece(piece.name)));
 		});
 
 		socket.on('piece', (piece) => {
 			console.log("Piece received", piece);
-			dispatch(setActivePiece(getNamePiece(piece.type)));
+			dispatch(setActivePiece(getNamePiece(piece.name)));
 		});
 
 		// socket.on("receive-penalty", ({ count }) => {

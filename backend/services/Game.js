@@ -1,6 +1,6 @@
 const { createGame } = require('../game/engine');
 const { createGrid } = require('../game/grid');
-const { getRandomPiece } = require('../game/pieces');
+const { getRandomPiece } = require('/shared/tetriminos');
 
 const rooms = {};
 

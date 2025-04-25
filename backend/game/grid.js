@@ -17,10 +17,9 @@ function createGrid() {
  * @returns {boolean}
  */
 function isValidMove(grid, piece, posX, posY) {
-  const { shape } = piece;
-  for (let y = 0; y < shape.length; y++) {
-    for (let x = 0; x < shape[y].length; x++) {
-      if (shape[y][x]) {
+  for (let y = 0; y < piece.length; y++) {
+    for (let x = 0; x < piece[y].length; x++) {
+      if (piece[y][x]) {
         const newY = posY + y;
         const newX = posX + x;
         if (

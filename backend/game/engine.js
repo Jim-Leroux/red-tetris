@@ -12,17 +12,6 @@ const { rotate, getRandomPiece } = require('/shared/tetriminos');
 function createGame(io, room, players, sequence) {
   let interval = null;
 
-	function nextPiece() {
-		return sequence.shift();
-	}
-
-  // Boucle principale du jeu, déclenchée à chaque 'tick'
-  function nextPiece() {
-	if (sequence.length < 10)
-		sequence = Array.from({ length: 100 }, () => getRandomPiece());
-	return sequence.shift();
-  }
-
   function tick() {
 	const specters = {};
 
@@ -70,7 +59,7 @@ function createGame(io, room, players, sequence) {
 	  // Spectre
 	  specters[socketId] = {
 		username: player.username,
-		name: player.currentPiece?.type,
+		name: player.currentPiece?.name,
 		shape: player.currentPiece?.shape,
 		position: { x: player.pieceX, y: player.pieceY },
 		grid: player.grid,
@@ -116,9 +105,9 @@ function createGame(io, room, players, sequence) {
   function rotatePiece(socketId) {
     const player = players[socketId];
     if (!player) return;
-    const rotated = rotate(player.currentPiece);
-    if (isValidMove(player.grid, rotated, player.pieceX, player.pieceY)) {
-      player.currentPiece = rotated;
+    const rotatedShape = rotate(player.currentPiece.shape);
+    if (isValidMove(player.grid, rotatedShape, player.pieceX, player.pieceY)) {
+      player.currentPiece.shape = rotatedShape;
     }
   }
 
