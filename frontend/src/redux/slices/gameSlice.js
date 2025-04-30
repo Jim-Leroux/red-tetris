@@ -7,6 +7,7 @@ import clearCompletedLines from "../../logic/lineUtils";
 const initialState = {
 	grid: Array(20).fill(Array(10).fill(0)),
 	activePiece: getRandomPiece(),
+	pieceQueue: [],
 	isStarted: false,
 	settings: {
 		progressiveSpeed: false,
@@ -30,6 +31,9 @@ const gameSlice = createSlice({
 		},
 		setActivePiece(state, action) {
 			state.activePiece = action.payload;
+		},
+		pushPieceToQueue(state, action) {
+			state.pieceQueue.push(action.payload);
 		},
 		setIsStarted(state, action) {
 			state.isStarted = action.payload;
@@ -61,7 +65,7 @@ const gameSlice = createSlice({
 				state.grid = result.grid;
 				state.totalLinesCleared += result.linesCleared;
 				state.linesClearedThisTurn = result.linesCleared;
-				const newPiece = getRandomPiece();
+				const newPiece = state.pieceQueue.length > 0 ? state.pieceQueue.shift() : getRandomPiece();
 				state.invisibleTick = 0;
 				if (hasCollision(state.grid, newPiece.shape, newPiece.position)) {
 					state.isGameOver = true;
@@ -113,7 +117,7 @@ const gameSlice = createSlice({
 			state.grid = result.grid;
 			state.totalLinesCleared += result.linesCleared;
 			state.linesClearedThisTurn = result.linesCleared;
-			const newPiece = getRandomPiece();
+			const newPiece = state.pieceQueue.length > 0 ? state.pieceQueue.shift() : getRandomPiece();
 			state.invisibleTick = 0;
 			if (hasCollision(state.grid, newPiece.shape, newPiece.position)) {
 				state.isGameOver = true;
@@ -140,5 +144,5 @@ const gameSlice = createSlice({
 	},
 });
 
-export const { setGrid, setActivePiece, setIsStarted, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, addGarbageLines } = gameSlice.actions;
+export const { setGrid, setActivePiece, setIsStarted, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, addGarbageLines, pushPieceToQueue } = gameSlice.actions;
 export default gameSlice.reducer;

@@ -7,6 +7,7 @@ export default function useKeyboardControls() {
 	const socket = useSocket();
 	const dispatch = useDispatch();
 	const room = useSelector((state) => state.session.room);
+	const isSolo = useSelector((state) => state.session.isSolo);
 	const reverse = useSelector((state) => state.game.settings.reverseControls);
 
 	useEffect(() => {
@@ -15,33 +16,33 @@ export default function useKeyboardControls() {
 				case 'ArrowLeft':
 					e.preventDefault();
 					dispatch(reverse ? moveRight() : moveLeft());
-					socket?.emit(reverse ? 'moveRight' : 'moveLeft', { room });
+					if (!isSolo) socket?.emit(reverse ? 'moveRight' : 'moveLeft', { room });
 					break;
 				case 'ArrowRight':
 					e.preventDefault();
 					dispatch(reverse ? moveLeft() : moveRight());
-					socket?.emit(reverse ? 'moveLeft' : 'moveRight', { room });
+					if (!isSolo) socket?.emit(reverse ? 'moveLeft' : 'moveRight', { room });
 					break;
 				case 'ArrowDown':
 					e.preventDefault();
 					dispatch(softDrop());
-					socket?.emit('softDrop', { room });
+					if (!isSolo) socket?.emit('softDrop', { room });
 					break;
 				case 'ArrowUp':
 					e.preventDefault();
 					dispatch(rotate());
-					socket?.emit('rotate', { room });
+					if (!isSolo) socket?.emit('rotate', { room });
 					break;
 				case ' ':
 					e.preventDefault();
 					dispatch(hardDrop());
-					socket?.emit('hardDrop', { room });
+					if (!isSolo) socket?.emit('hardDrop', { room });
 					break;
 				default:
-					 break;
+					break;
 			}
-		}
+		};
 		window.addEventListener('keydown', handleKeyDown);
 		return () => window.removeEventListener('keydown', handleKeyDown);
-	}, [dispatch, reverse])
+	}, [dispatch, reverse, isSolo, room, socket]);
 }

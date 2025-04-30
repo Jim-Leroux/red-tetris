@@ -1,13 +1,18 @@
 const { createGame } = require('../game/engine');
+const { createGrid } = require('../game/grid');
+const { getRandomPiece } = require('/shared/tetriminos');
 
 const rooms = {};
 
 function addPlayerToRoom(socketId, username, room) {
-	let isHost = false;
+  let isHost = false;
   if (!rooms[room]) {
-	isHost = true;
+    isHost = true;
     rooms[room] = {
       players: {},
+      sequence: [],
+      settings: {},
+	  pieceQueue: [],
       game: null,
     };
   }
@@ -15,18 +20,25 @@ function addPlayerToRoom(socketId, username, room) {
   rooms[room].players[socketId] = {
     username,
     socketId,
+    grid: createGrid(),
+    currentPiece: null,
+    pieceX: 3,
+    pieceY: 0,
+	isAlive: true,
+	pieceIndex: 0,
   };
+
   return isHost;
 }
 
 function removePlayer(socketId) {
   for (const room in rooms) {
     if (rooms[room].players[socketId]) {
+      const playerCount = Object.keys(rooms[room].players).length;
       delete rooms[room].players[socketId];
 
-      // Supprimer room si vide
-      if (Object.keys(rooms[room].players).length === 0) {
-        if (rooms[room].game) rooms[room].game.stop();
+      if (playerCount === 1) {
+        rooms[room].game?.stop();
         delete rooms[room];
       }
 
@@ -41,10 +53,24 @@ function getPlayersInRoom(room) {
 }
 
 function startGame(io, room) {
-  if (!rooms[room]) return;
+  const roomObj = rooms[room];
+  if (!roomObj) return;
 
-  rooms[room].game = createGame(io, room);
-  rooms[room].game.start();
+  // Générer une séquence partagée de pièces
+  roomObj.sequence = Array.from({ length: 100 }, () => getRandomPiece());
+  const firstPiece = roomObj.sequence[0];
+	Object.values(roomObj.players).forEach(player => {
+	  player.currentPiece = firstPiece;
+	  player.pieceX = 3;
+	  player.pieceY = 0;
+	  player.pieceIndex = 0; // ← on commence tous à 0
+	});
+	io.to(room).emit('piece', firstPiece);
+
+  // Créer et démarrer le moteur de jeu
+  const game = createGame(io, room, roomObj.players, roomObj.sequence);
+  roomObj.game = game;
+  game.start();
 }
 
 function getGame(room) {
@@ -65,8 +91,8 @@ module.exports = {
   addPlayerToRoom,
   removePlayer,
   getPlayersInRoom,
-  setRoomSettings,
-  getRoomSettings,
   startGame,
-  getGame
+  getGame,
+  setRoomSettings,
+  getRoomSettings
 };

@@ -10,7 +10,7 @@ import WebSocketProvider from './context/WebSocketContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-	<React.StrictMode>
+	// <React.StrictMode>
 		<WebSocketProvider>
 			<BrowserRouter>
 				<Provider store={store}>
@@ -18,6 +18,6 @@ root.render(
 				</Provider>
 			</BrowserRouter>
 		</WebSocketProvider>
-	</React.StrictMode>
+	// </React.StrictMode>
 );
 

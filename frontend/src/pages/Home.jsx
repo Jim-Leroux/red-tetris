@@ -22,22 +22,33 @@ export default function Home() {
 
 	const handleStart = () => {
 		if (!username.trim()) return;
-		console.log('emit');
-		socket?.emit('joinRoom', {username, mode, room: roomName}, (callback) => {
-			const { success, isHost, room, players } = callback;
-			console.log('callback', isHost	, room, players);
-			if (success) {
-				dispatch(setIsSolo(mode === 'solo' ? true : false));
-				dispatch(setMe(username));
-				dispatch(setIsHost(isHost));
-				dispatch(setRoom(room));
-				dispatch(resetGame());
-				dispatch(mode === 'solo' ? resetSolo() : resetMultiplayerStats());
-				mode === 'solo' ? null : dispatch(setPlayers(players));
-				navigate(`/${room}/${username}`);
-			}
-		})
+
+		if (mode === 'solo') {
+			dispatch(setIsSolo(true));
+			dispatch(setMe(username));
+			dispatch(setIsHost(true));
+			dispatch(setRoom(username));
+			dispatch(resetGame());
+			dispatch(resetSolo());
+			navigate(`/${username}`);
+		} else {
+			socket?.emit('joinRoom', { username, mode, room: roomName }, (callback) => {
+				const { success, isHost, room, players } = callback;
+				console.log('callback', isHost, room, players);
+				if (success) {
+					dispatch(setIsSolo(false));
+					dispatch(setMe(username));
+					dispatch(setIsHost(isHost));
+					dispatch(setRoom(room));
+					dispatch(resetGame());
+					dispatch(resetMultiplayerStats());
+					dispatch(setPlayers(players));
+					navigate(`/${room}/${username}`);
+				}
+			});
+		}
 	};
+
 
 	return (
 		<div className="home-container">
