@@ -28,29 +28,20 @@ export default function Specter({ playerName, specterData }) {
 	});
 
 	return (
-		<div style={{ margin: 10 }}>
-			<p style={{ fontWeight: 'bold', textAlign: 'center' }}>{playerName}</p>
-			<div
-				style={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(10, 10px)',
-					gridTemplateRows: 'repeat(20, 10px)',
-					gap: '1px',
-					border: '1px solid #444'
-				}}
-			>
-				{grid.flat().map((cellColor, index) => (
-					<div
-						key={index}
-						style={{
-							width: 10,
-							height: 10,
-							backgroundColor: cellColor || 'transparent',
-							border: '1px solid #222'
-						}}
-					/>
-				))}
-			</div>
-		</div>
+		<div className="specter-wrapper">
+  <p className="specter-username">{playerName}</p>
+  <div className="specter-grid">
+    {grid.flat().map((cellColor, index) => (
+      <div
+        key={index}
+        className="specter-cell"
+        style={{
+          backgroundColor: cellColor || 'transparent'
+        }}
+      />
+    ))}
+  </div>
+</div>
+
 	);
 }

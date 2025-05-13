@@ -34,7 +34,7 @@ function createGame(io, room, players, sequence) {
 		player.pieceIndex = (player.pieceIndex ?? 0) + 1;
 
 		// Étendre la séquence si besoin
-		if (sequence.length <= player.pieceIndex + 2) {
+		if (sequence.length <= player.pieceIndex + 5) {
 		  const extraPieces = Array.from({ length: 50 }, () => getRandomPiece());
 		  sequence.push(...extraPieces);
 		}
@@ -52,8 +52,7 @@ function createGame(io, room, players, sequence) {
 		  continue;
 		}
 
-		console.log(piece);
-		io.to(socketId).emit('addQueue', sequence[player.pieceIndex + 2]);
+		io.to(socketId).emit('addQueue', sequence[player.pieceIndex + 5]);
 	  }
 
 	  // Spectre

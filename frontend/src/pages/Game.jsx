@@ -35,9 +35,10 @@ export default function Game() {
 			<div className="game-box-horizontal">
 				<GameHUD />
 				<TetrisGrid />
+				<SpecterPanel />
 			</div>
 			<GameOverOverlay />
-			<SpecterPanel />
+
 		</div>
 	)
 

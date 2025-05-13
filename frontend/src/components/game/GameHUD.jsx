@@ -8,16 +8,45 @@ export default function GameHUD() {
 	const players = useSelector(state => state.session.players || {});
 	const soloStats = useSelector(state => state.soloStats);
 	const multiStats = useSelector(state => state.multiplayerStats);
-
+	const pieceQueue = useSelector(state => state.game.pieceQueue);
 	const score = isSolo ? soloStats.score : multiStats.score;
 
 	return (
+		<div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+		<div className="game-piece">
+			<div className="game-piece-label">Prochaines pièces</div>
+			{pieceQueue.slice(0, 5).map((piece, index) => {
+				const { shape, option } = piece;
+				return (
+					<div key={index} className="game-piece-preview">
+						{shape.map((row, rowIndex) => {
+							return (
+								<div key={rowIndex} className="game-piece-row">
+									{row.map((cell, cellIndex) => (
+										<div
+											key={cellIndex}
+											className={`game-piece-cell`}
+											style={{
+												backgroundColor: cell ? option?.color  : 'transparent',
+												boxShadow: cell ? option?.boxShadow : 'none',
+											}}
+										></div>
+									))}
+								</div>
+							);
+						})}
+					</div>
+				);
+			})}
+		</div>
 		<div className="game-hud">
 			<div><span>👤</span> {me}</div>
-			<div><span>🏷️</span> {room}</div>
+			{!isSolo && (<div><span>🏷️</span> {room}</div>)}
 			<div><span>🎮</span> {isSolo ? "Solo" : "Multijoueur"}</div>
 			<div><span>👥</span> {Object.keys(players).length}</div>
 			<div><span>🧮</span> Score: {score}</div>
 		</div>
+		</div>
+
 	);
 }
