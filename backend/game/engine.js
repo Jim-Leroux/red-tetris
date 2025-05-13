@@ -34,7 +34,7 @@ function createGame(io, room, players, sequence) {
 		player.pieceIndex = (player.pieceIndex ?? 0) + 1;
 
 		// Étendre la séquence si besoin
-		if (sequence.length <= player.pieceIndex) {
+		if (sequence.length <= player.pieceIndex + 2) {
 		  const extraPieces = Array.from({ length: 50 }, () => getRandomPiece());
 		  sequence.push(...extraPieces);
 		}
@@ -52,8 +52,8 @@ function createGame(io, room, players, sequence) {
 		  continue;
 		}
 
-		// Envoyer uniquement à CE joueur la nouvelle pièce
-		io.to(socketId).emit('nextPiece', piece);
+		console.log(piece);
+		io.to(socketId).emit('addQueue', sequence[player.pieceIndex + 2]);
 	  }
 
 	  // Spectre

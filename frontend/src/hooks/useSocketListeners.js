@@ -45,15 +45,22 @@ export default function useSocketListeners() {
 			});
 		});
 
-		socket.on("nextPiece", (piece) => {
-			console.log("Next piece received", piece);
-			dispatch(pushPieceToQueue(getNamePiece(piece.name)));
-		});
-
 		socket.on('piece', (piece) => {
 			console.log("Piece received", piece);
 			dispatch(setActivePiece(getNamePiece(piece.name)));
 		});
+
+		socket.on('queue', (pieces) => {
+			console.log("Queue received", pieces);
+			pieces.forEach(piece => {
+				dispatch(pushPieceToQueue(getNamePiece(piece.name)));
+			});
+		})
+
+		socket.on('addQueue', (piece) => {
+			console.log("Piece added to queue", piece);
+			dispatch(pushPieceToQueue(getNamePiece(piece.name)));
+		}	);
 
 		// socket.on("receive-penalty", ({ count }) => {
 		// 	dispatch(addGarbageLines(count));
@@ -70,6 +77,10 @@ export default function useSocketListeners() {
 			socket.off("updatePlayer");
 			socket.off("gameStarted");
 			socket.off("settingsUpdated");
+			socket.off("spectersUpdate");
+			socket.off("piece");
+			socket.off("queue");
+			socket.off("addQueue");
 			// socket.off("receive-penalty");
 			// socket.off("specter-update");
 			// Pense à nettoyer les autres aussi

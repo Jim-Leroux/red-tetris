@@ -17,9 +17,10 @@ function createGrid() {
  * @returns {boolean}
  */
 function isValidMove(grid, piece, posX, posY) {
-  for (let y = 0; y < piece.length; y++) {
-    for (let x = 0; x < piece[y].length; x++) {
-      if (piece[y][x]) {
+  const shape = piece.shape; // <- accès correct à la matrice de la pièce
+  for (let y = 0; y < shape.length; y++) {
+    for (let x = 0; x < shape[y].length; x++) {
+      if (shape[y][x]) {
         const newY = posY + y;
         const newX = posX + x;
         if (
@@ -36,7 +37,6 @@ function isValidMove(grid, piece, posX, posY) {
   }
   return true;
 }
-
 /**
  * Fusionne une pièce dans la grille et retourne la nouvelle grille
  * @param {number[][]} grid

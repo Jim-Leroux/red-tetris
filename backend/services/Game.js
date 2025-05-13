@@ -65,8 +65,12 @@ function startGame(io, room) {
 	  player.pieceY = 0;
 	  player.pieceIndex = 0; // ← on commence tous à 0
 	});
-	io.to(room).emit('piece', firstPiece);
+	console.log("First piece", firstPiece);
 
+  // Envoyer la première pièce à tous les joueurs
+
+	io.to(room).emit('piece', firstPiece);
+	io.to(room).emit('queue', roomObj.sequence.slice(1, 6));
   // Créer et démarrer le moteur de jeu
   const game = createGame(io, room, roomObj.players, roomObj.sequence);
   roomObj.game = game;
