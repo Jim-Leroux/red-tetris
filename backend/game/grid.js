@@ -18,6 +18,8 @@ function createGrid() {
  */
 function isValidMove(grid, piece, posX, posY) {
   const shape = piece.shape; // <- accès correct à la matrice de la pièce
+  if (!shape)
+      return;
   for (let y = 0; y < shape.length; y++) {
     for (let x = 0; x < shape[y].length; x++) {
       if (shape[y][x]) {
@@ -89,12 +91,26 @@ function calculateSpectre(grid) {
   return spectre;
 }
 
+function addPenaltyLines(grid, count) {
+  const newGrid = grid.slice(count); // Supprime les lignes du haut
+  for (let i = 0; i < count; i++) {
+    const row = Array(COLS).fill(1);
+    // Laisse un trou aléatoire
+    const hole = Math.floor(Math.random() * COLS);
+    row[hole] = 0;
+    newGrid.push(row);
+  }
+  return newGrid;
+}
+
+
 module.exports = {
   createGrid,
   isValidMove,
   mergePiece,
   clearLines,
   calculateSpectre,
+  addPenaltyLines,
   ROWS,
   COLS
 };

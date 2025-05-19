@@ -1,5 +1,5 @@
 
-const { isValidMove, mergePiece, clearLines } = require('./grid');
+const { isValidMove, mergePiece, clearLines, addPenaltyLines } = require('./grid');
 const { rotate, getRandomPiece } = require('/shared/tetriminos');
 
 /**
@@ -27,8 +27,19 @@ function createGame(io, room, players, sequence) {
 	  } else {
 		// Fixer la pièce
 		player.grid = mergePiece(grid, currentPiece, pieceX, pieceY);
-		const { newGrid } = clearLines(player.grid);
+		const { newGrid, linesCleared } = clearLines(player.grid);
 		player.grid = newGrid;
+
+    if (linesCleared >= 2) {
+      for (const otherId in players) {
+        if (otherId !== socketId && players[otherId].isAlive) {
+          players[otherId].grid = addPenaltyLines(players[otherId].grid, linesCleared - 1);
+          io.to(otherId).emit('penalty', {
+            count: linesCleared - 1
+          });
+        }
+      }
+    }
 
 		// Déterminer l'index de la prochaine pièce
 		player.pieceIndex = (player.pieceIndex ?? 0) + 1;
