@@ -20,7 +20,7 @@ function createGame(io, room, players, sequence) {
 	  if (!player.isAlive) continue;
 
 	  const { grid, currentPiece, pieceX, pieceY } = player;
-
+		if (!currentPiece || !currentPiece.shape) continue;
 	  // Mouvement automatique
 	  if (isValidMove(grid, currentPiece, pieceX, pieceY + 1)) {
 		player.pieceY++;
@@ -29,13 +29,14 @@ function createGame(io, room, players, sequence) {
 		player.grid = mergePiece(grid, currentPiece, pieceX, pieceY);
 		const { newGrid, linesCleared } = clearLines(player.grid);
 		player.grid = newGrid;
-
-    if (linesCleared >= 2) {
+		console.log(`Player ${player.username} cleared ${linesCleared} lines`);
+    if (linesCleared >= 1) {
       for (const otherId in players) {
         if (otherId !== socketId && players[otherId].isAlive) {
           players[otherId].grid = addPenaltyLines(players[otherId].grid, linesCleared - 1);
+		  console.log(`Added ${linesCleared - 1} penalty lines to player ${players[otherId].username}`);
           io.to(otherId).emit('penalty', {
-            count: linesCleared - 1
+            count: linesCleared
           });
         }
       }

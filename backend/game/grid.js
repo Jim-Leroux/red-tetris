@@ -17,7 +17,8 @@ function createGrid() {
  * @returns {boolean}
  */
 function isValidMove(grid, piece, posX, posY) {
-  const shape = piece.shape; // <- accès correct à la matrice de la pièce
+  if (!piece || !piece.shape) return false;
+  const shape = piece.shape;
   if (!shape)
       return;
   for (let y = 0; y < shape.length; y++) {
@@ -67,15 +68,13 @@ function mergePiece(grid, piece, posX, posY) {
  */
 function clearLines(grid) {
   const filtered = grid.filter(row => {
-    if (row.includes(9)) return true;
-    return row.some(cell => cell === 0);
+    return row.includes(0) || row.includes(9);
   });
 
   const linesCleared = ROWS - filtered.length;
   while (filtered.length < ROWS) {
     filtered.unshift(Array(COLS).fill(0));
   }
-
   return { newGrid: filtered, linesCleared };
 }
 
