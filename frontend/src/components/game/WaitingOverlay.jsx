@@ -41,7 +41,9 @@ export default function WaitingOverlay({ setWaitingToStart }) {
 				</ul>
 				{isHost ? (
 					<>
+						<h2>Paramètres de la partie :</h2>
 						<SettingsPanel />
+						<p>Room name =  {room}</p>
 						<p>Appuie sur <strong>Entrée</strong> pour lancer la partie</p>
 					</>
 				) : (

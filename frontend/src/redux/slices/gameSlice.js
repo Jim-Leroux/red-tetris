@@ -136,10 +136,18 @@ const gameSlice = createSlice({
 		},
 		addGarbageLines(state, action) {
 			const numberOfLines = action.payload;
-			const garbageLine = Array(10).fill({ value: 9, option: { color: '#333' } });
-			const newLines = Array(numberOfLines).fill(garbageLine);
-			state.grid = [...state.grid.slice(numberOfLines), ...newLines];
+			const newGrid = state.grid.slice(numberOfLines); // supprime du haut
+
+			for (let i = 0; i < numberOfLines; i++) {
+				const row = Array(10).fill(1); // ligne pleine
+				const hole = Math.floor(Math.random() * 10);
+				row[hole] = 0;
+				newGrid.push(row);
+			}
+
+			state.grid = newGrid;
 		}
+
 
 	},
 });

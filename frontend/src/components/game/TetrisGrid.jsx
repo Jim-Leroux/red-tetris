@@ -31,7 +31,9 @@ export default function TetrisGrid() {
 				<div key={`${y}-${x}`} className={classes.join(' ')} style={{
 					backgroundColor: isPieceCell && (!invisible || tick <= 5)
 						? option.color
-						: cell?.option?.color || 'transparent',
+						: cell === 9
+							? '#3a3a3a' // couleur pénalité personnalisée
+							: cell?.option?.color || 'transparent',
 					boxShadow: isPieceCell && (!invisible || tick <= 5)
 						? option.boxShadow
 						: cell?.option?.boxShadow || 'none'

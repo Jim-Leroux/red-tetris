@@ -29,7 +29,6 @@ export default function useSocketListeners() {
 
 		socket?.on('settingsUpdated',  (settings => {
 			if (!settings || typeof settings !== 'object') return;
-			// console.log("Settings updated", settings);
 			Object.entries(settings).forEach(([key, value]) => {
 				dispatch(setSetting({ name: key, value }));
 			});
@@ -37,10 +36,8 @@ export default function useSocketListeners() {
 		))
 
 		socket.on('spectersUpdate', (specters) => {
-			// console.log("Specters updated", specters);
 			Object.entries(specters).forEach(([player, spectre]) => {
 				if (player == socket.id) return;
-				// console.log("Specter for player", player, spectre);
 				dispatch(setSpectre({ player, spectre }));
 			});
 		});
@@ -62,15 +59,9 @@ export default function useSocketListeners() {
 			dispatch(pushPieceToQueue(getNamePiece(piece.name)));
 		}	);
 
-		// socket.on("receive-penalty", ({ count }) => {
-		// 	dispatch(addGarbageLines(count));
-		// });
-
-		// socket.on("specter-update", ({ player, spectre }) => {
-		// 	dispatch(setSpectre({ player, spectre }));
-		// });
-
-		// Tu peux ajouter d’autres socket.on ici...
+		 socket.on('penalty', ({ count }) => {
+			dispatch(addGarbageLines(count));
+		});
 
 		return () => {
 			socket.off("updatePlayers");
@@ -81,9 +72,7 @@ export default function useSocketListeners() {
 			socket.off("piece");
 			socket.off("queue");
 			socket.off("addQueue");
-			// socket.off("receive-penalty");
-			// socket.off("specter-update");
-			// Pense à nettoyer les autres aussi
+			socket.off("penalty");
 		};
 	}, [dispatch, room]);
 }

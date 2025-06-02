@@ -66,13 +66,19 @@ function mergePiece(grid, piece, posX, posY) {
  * @returns {{ newGrid: number[][], linesCleared: number }}
  */
 function clearLines(grid) {
-  const filtered = grid.filter(row => row.some(cell => cell === 0));
+  const filtered = grid.filter(row => {
+    if (row.includes(9)) return true;
+    return row.some(cell => cell === 0);
+  });
+
   const linesCleared = ROWS - filtered.length;
   while (filtered.length < ROWS) {
     filtered.unshift(Array(COLS).fill(0));
   }
+
   return { newGrid: filtered, linesCleared };
 }
+
 
 /**
  * Calcule le spectre (hauteur) de chaque colonne dans la grille
@@ -92,16 +98,16 @@ function calculateSpectre(grid) {
 }
 
 function addPenaltyLines(grid, count) {
-  const newGrid = grid.slice(count); // Supprime les lignes du haut
+  const newGrid = grid.slice(count); // enlève le haut
   for (let i = 0; i < count; i++) {
-    const row = Array(COLS).fill(1);
-    // Laisse un trou aléatoire
+    const row = Array(COLS).fill(9); // ligne pénalité indestructible
     const hole = Math.floor(Math.random() * COLS);
     row[hole] = 0;
     newGrid.push(row);
   }
   return newGrid;
 }
+
 
 
 module.exports = {
