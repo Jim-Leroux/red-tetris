@@ -19,27 +19,29 @@ function createGrid() {
 function isValidMove(grid, piece, posX, posY) {
   if (!piece || !piece.shape) return false;
   const shape = piece.shape;
-  if (!shape)
-      return;
+
   for (let y = 0; y < shape.length; y++) {
     for (let x = 0; x < shape[y].length; x++) {
       if (shape[y][x]) {
         const newY = posY + y;
         const newX = posX + x;
+
         if (
           newY < 0 ||
           newY >= ROWS ||
           newX < 0 ||
           newX >= COLS ||
-          (grid[newY][newX] !== 0)
+          (grid[newY][newX] !== 0 && typeof grid[newY][newX] === 'object')
         ) {
           return false;
         }
       }
     }
   }
+
   return true;
 }
+
 /**
  * Fusionne une pièce dans la grille et retourne la nouvelle grille
  * @param {number[][]} grid
@@ -51,15 +53,25 @@ function isValidMove(grid, piece, posX, posY) {
 function mergePiece(grid, piece, posX, posY) {
   const newGrid = grid.map(row => row.slice());
   const { shape, name, option } = piece;
+
   for (let y = 0; y < shape.length; y++) {
     for (let x = 0; x < shape[y].length; x++) {
       if (shape[y][x]) {
-        newGrid[posY + y][posX + x] = { name, option };
+        const targetY = posY + y;
+        const targetX = posX + x;
+        if (
+          targetY >= 0 && targetY < newGrid.length &&
+          targetX >= 0 && targetX < newGrid[0].length
+        ) {
+          newGrid[targetY][targetX] = { name, option };
+        }
       }
     }
   }
+
   return newGrid;
 }
+
 
 /**
  * Supprime les lignes complètes et retourne la nouvelle grille et le nombre de lignes effacées
@@ -98,14 +110,20 @@ function calculateSpectre(grid) {
 
 function addPenaltyLines(grid, count) {
   const newGrid = grid.slice(count); // enlève le haut
+  const holes = [];
+
   for (let i = 0; i < count; i++) {
-    const row = Array(COLS).fill(9); // ligne pénalité indestructible
+    const row = Array(COLS).fill(9);
     const hole = Math.floor(Math.random() * COLS);
     row[hole] = 0;
+    holes.push(hole);
     newGrid.push(row);
   }
-  return newGrid;
+
+  return { newGrid, holes };
 }
+
+
 
 
 

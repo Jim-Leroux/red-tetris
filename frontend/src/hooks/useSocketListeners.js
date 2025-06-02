@@ -37,7 +37,7 @@ export default function useSocketListeners() {
 
 		socket.on('spectersUpdate', (specters) => {
 			Object.entries(specters).forEach(([player, spectre]) => {
-				if (player == socket.id) return;
+				// if (player == socket.id) return;
 				dispatch(setSpectre({ player, spectre }));
 			});
 		});
@@ -59,8 +59,8 @@ export default function useSocketListeners() {
 			dispatch(pushPieceToQueue(getNamePiece(piece.name)));
 		}	);
 
-		 socket.on('penalty', ({ count }) => {
-			dispatch(addGarbageLines(count));
+		 socket.on('penalty', ({ count, holes }) => {
+			dispatch(addGarbageLines({ count, holes }));
 			console.log("Penalty received", count);
 		});
 

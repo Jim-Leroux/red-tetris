@@ -32,10 +32,10 @@ function createGame(io, room, players, sequence) {
 		if (linesCleared >= 1) {
 			for (const otherId in players) {
 				if (otherId !== socketId && players[otherId].isAlive) {
-					players[otherId].grid = addPenaltyLines(players[otherId].grid, linesCleared - 1);
-					console.log(`Added ${linesCleared - 1} penalty lines to player ${players[otherId].username}`);
+					players[otherId].grid, holes = addPenaltyLines(players[otherId].grid, linesCleared - 1);
 					io.to(otherId).emit('penalty', {
-					count: linesCleared
+					count: linesCleared,
+					holes: holes
 				});
 			}
 		}
@@ -51,7 +51,7 @@ function createGame(io, room, players, sequence) {
 		}
 
 		// Récupérer la prochaine pièce
-		const piece = sequence[player.pieceIndex];
+		const piece = JSON.parse(JSON.stringify(sequence[player.pieceIndex]));
 		player.currentPiece = piece;
 		player.pieceX = 3;
 		player.pieceY = 0;
@@ -114,11 +114,15 @@ function createGame(io, room, players, sequence) {
    */
   function rotatePiece(socketId) {
     const player = players[socketId];
+	console.log("Rotating piece for player", player.username);
     if (!player) return;
     const rotatedShape = rotate(player.currentPiece.shape);
-    if (isValidMove(player.grid, rotatedShape, player.pieceX, player.pieceY)) {
+	const rotatedPiece = {
+  ...player.currentPiece,
+  shape: rotatedShape
+};
+    if (isValidMove(player.grid, rotatedPiece, player.pieceX, player.pieceY)) {
       player.currentPiece.shape = rotatedShape;
-	  console.log(`Player ${player.username} rotated piece to ${player.currentPiece.name}`);
     }
   }
 

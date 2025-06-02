@@ -135,19 +135,21 @@ const gameSlice = createSlice({
 			state.isStarted = false;
 		},
 		addGarbageLines(state, action) {
-			const numberOfLines = action.payload;
-			console.log(`Adding ${numberOfLines} garbage lines`);
-			const newGrid = state.grid.slice(numberOfLines); // supprime du haut
+			  const { count, holes } = action.payload;
+			  console.log(`Adding ${count} garbage lines`, holes);
 
-			for (let i = 0; i < numberOfLines; i++) {
-				const row = Array(10).fill(1); // ligne pleine
-				const hole = Math.floor(Math.random() * 10);
-				row[hole] = 0;
-				newGrid.push(row);
-			}
+			  const newGrid = state.grid.slice(count); // supprime du haut
 
-			state.grid = newGrid;
+			  for (let i = 0; i < count; i++) {
+			    const row = Array(10).fill(9);
+			    const hole = holes[i];
+			    row[hole] = 0;
+			    newGrid.push(row);
+			  }
+
+			  state.grid = newGrid;
 		}
+
 
 
 	},

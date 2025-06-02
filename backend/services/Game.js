@@ -60,7 +60,7 @@ function startGame(io, room) {
   roomObj.sequence = Array.from({ length: 100 }, () => getRandomPiece());
   const firstPiece = roomObj.sequence[0];
 	Object.values(roomObj.players).forEach(player => {
-	  player.currentPiece = firstPiece;
+	  player.currentPiece = JSON.parse(JSON.stringify(firstPiece));
 	  player.pieceX = 3;
 	  player.pieceY = 0;
 	  player.pieceIndex = 0; // ← on commence tous à 0
