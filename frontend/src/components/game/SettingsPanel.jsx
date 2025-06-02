@@ -15,7 +15,7 @@ export default function SettingsPanel() {
 	const settings = useSelector((state) => state.game.settings);
 
 	return (
-		<div>
+		<div className="settings-panel">
 			<h3>Paramètres de jeu</h3>
 			{SETTINGS.map(({ label, key }) => (
 				<label key={key} style={{ display: 'block', marginBottom: 6 }}>

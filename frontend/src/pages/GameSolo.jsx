@@ -1,9 +1,8 @@
-import React, { use, useEffect, useState } from "react"
+import { useEffect } from "react"
 import useGameLoop from "../hooks/useGameLoop";
 import useKeyboardControls from "../hooks/useKeyboardControls";
 import useScoreUpdater from "../hooks/useScoreUpdater";
 import TetrisGrid from "../components/game/TetrisGrid";
-import useTimer from "../hooks/useTimer";
 import useGameEnd from "../hooks/useGameEnd";
 import GameOverOverlay from "../components/game/GameOverOverlay";
 import GameHUD from "../components/game/GameHUD";
@@ -11,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "./game.css"
 import { pushPieceToQueue, setIsStarted } from "../redux/slices/gameSlice";
 import getRandomPiece from "../logic/tetriminos";
+import SettingsPanel from "../components/game/SettingsPanel";
 
 export default function GameSolo() {
 	const isStarted = useSelector((state) => state.game.isStarted);
@@ -20,7 +20,6 @@ export default function GameSolo() {
 	useGameLoop();
 	useKeyboardControls();
 	useScoreUpdater();
-	useTimer();
 	useGameEnd();
 
 	useEffect(() => {
@@ -48,6 +47,7 @@ export default function GameSolo() {
 				<div className="game-box-horizontal">
 					<GameHUD />
 					<TetrisGrid />
+					<SettingsPanel />
 				</div>
 				<GameOverOverlay />
 			</div>);

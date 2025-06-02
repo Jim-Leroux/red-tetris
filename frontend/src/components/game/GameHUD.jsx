@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 
 export default function GameHUD() {
@@ -7,9 +6,11 @@ export default function GameHUD() {
 	const isSolo = useSelector(state => state.session.isSolo);
 	const players = useSelector(state => state.session.players || {});
 	const soloStats = useSelector(state => state.soloStats);
-	const multiStats = useSelector(state => state.multiplayerStats);
 	const pieceQueue = useSelector(state => state.game.pieceQueue);
-	const score = isSolo ? soloStats.score : multiStats.score;
+	const score = soloStats.score;
+	const lastScore = soloStats.lastScore;
+	const highScore = soloStats.highScore;
+	const gamesPlayed = soloStats.gamesPlayed;
 
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -43,8 +44,12 @@ export default function GameHUD() {
 			<div><span>👤</span> {me}</div>
 			{!isSolo && (<div><span>🏷️</span> {room}</div>)}
 			<div><span>🎮</span> {isSolo ? "Solo" : "Multijoueur"}</div>
-			<div><span>👥</span> {Object.keys(players).length}</div>
-			<div><span>🧮</span> Score: {score}</div>
+			{isSolo && (<div><span>👥</span> {Object.keys(players).length}</div>)}
+			{isSolo && (<div><span></span>  highScore: {highScore}</div>)}
+			{isSolo && (<div> <span></span> lastScore: {lastScore}</div>)}
+			{isSolo && (<div><span>🧮</span> Score: {score}</div>)}
+			{isSolo && (<div><span>⏱️</span> partie joue: {gamesPlayed}</div>)}
+
 		</div>
 		</div>
 

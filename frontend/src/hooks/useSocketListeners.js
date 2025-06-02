@@ -61,6 +61,7 @@ export default function useSocketListeners() {
 
 		 socket.on('penalty', ({ count }) => {
 			dispatch(addGarbageLines(count));
+			console.log("Penalty received", count);
 		});
 
 		return () => {

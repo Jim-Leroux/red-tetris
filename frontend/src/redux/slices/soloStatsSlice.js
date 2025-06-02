@@ -5,25 +5,12 @@ const initialState = {
 	lastScore: parseInt(localStorage.getItem('lastScore')) || 0,
 	highScore: parseInt(localStorage.getItem('highScore')) || 0,
 	gamesPlayed: parseInt(localStorage.getItem('gamesPlayed')) || 0,
-	totalTimePlayed: parseInt(localStorage.getItem('totalTimePlayed')) || 0,
-	startTime: null,
 }
 
 const soloStatsSlice = createSlice({
 	name: 'solo',
 	initialState,
 	reducers: {
-		startSoloTimer(state) {
-			state.startTime = Date.now();
-		},
-		stopSoloTimer(state) {
-			if (state.startTime) {
-				const duration = Date.now() - state.startTime;
-				state.totalTimePlayed += duration;
-				localStorage.setItem('totalTimePlayed', state.totalTimePlayed);
-				state.startTime = null;
-			}
-		},
 		addSoloPoints(state, action) {
 			state.score += action.payload
 		},
@@ -36,31 +23,25 @@ const soloStatsSlice = createSlice({
 			localStorage.setItem('lastScore', state.lastScore);
 			state.gamesPlayed += 1;
 			localStorage.setItem('gamesPlayed', state.gamesPlayed);
-			const duration = state.startTime ? Math.floor((Date.now() - state.startTime) / 1000) : 0;
-			state.totalTimePlayed += duration;
-			localStorage.setItem('totalTimePlayed', state.totalTimePlayed);
 			state.score = 0;
-			state.startTime = null;
 		},
 		resetSolo(state) {
 			state.score = 0;
 			state.lastScore = parseInt(localStorage.getItem('lastScore')) || 0;
 			state.highScore = parseInt(localStorage.getItem('highScore')) || 0;
 			state.gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
-			state.totalTimePlayed = parseInt(localStorage.getItem('totalTimePlayed')) || 0;
-			state.startTime = null;
+
 		},
 		resetSoloStats(state) {
 			state.score = 0;
 			state.lastScore = 0;
 			state.highScore = 0;
 			state.gamesPlayed = 0;
-			state.totalTimePlayed = 0;
 			localStorage.clear();
 		},
 	},
 })
 
-export const { startSoloTimer, stopSoloTimer, addSoloPoints, registerSoloGameEnd, resetSolo, resetSoloStats } = soloStatsSlice.actions;
+export const { addSoloPoints, registerSoloGameEnd, resetSolo, resetSoloStats } = soloStatsSlice.actions;
 
 export default soloStatsSlice.reducer;

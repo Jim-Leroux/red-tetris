@@ -136,6 +136,7 @@ const gameSlice = createSlice({
 		},
 		addGarbageLines(state, action) {
 			const numberOfLines = action.payload;
+			console.log(`Adding ${numberOfLines} garbage lines`);
 			const newGrid = state.grid.slice(numberOfLines); // supprime du haut
 
 			for (let i = 0; i < numberOfLines; i++) {
