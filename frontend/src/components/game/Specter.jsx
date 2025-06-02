@@ -2,46 +2,55 @@ import React from "react";
 import { TETRIMINOS } from "../../logic/tetriminos";
 
 export default function Specter({ playerName, specterData }) {
-	if (
-		!specterData ||
-		!specterData.name ||
-		!specterData.shape ||
-		!specterData.position ||
-		!specterData.grid
-	) return null;
+  if (
+    !specterData ||
+    !specterData.name ||
+    !specterData.shape ||
+    !specterData.position ||
+    !specterData.grid
+  ) return null;
 
-	const { name, shape, position, grid: baseGrid } = specterData;
-	const color = TETRIMINOS[name]?.option?.color || "gray";
+  const { name, shape, position, grid: baseGrid } = specterData;
 
-	// Cloner la grille reçue (pour ne pas la muter)
-	const grid = baseGrid.map(row => [...row]);
+  // Fonction pour convertir une cellule en couleur CSS
+  function getCellColor(cell) {
+    if (!cell) return 'transparent';
+    if (typeof cell === 'object') {
+      const color = TETRIMINOS[cell.name]?.option?.color;
+      return color || 'gray';
+    }
+    if (cell === 9) return '#444'; // ligne de pénalité
+    return 'transparent';
+  }
 
-	// Dessiner la pièce active sur la grille (par-dessus les blocs fixés)
-	shape.forEach((row, dy) => {
-		row.forEach((cell, dx) => {
-			const x = position.x + dx;
-			const y = position.y + dy;
-			if (cell && y >= 0 && y < 20 && x >= 0 && x < 10) {
-				grid[y][x] = color;
-			}
-		});
-	});
+  // Clone de la grille pour y dessiner la pièce active
+  const grid = baseGrid.map(row => [...row]);
 
-	return (
-		<div className="specter-wrapper">
-  <p className="specter-username">{playerName}</p>
-  <div className="specter-grid">
-    {grid.flat().map((cellColor, index) => (
-      <div
-        key={index}
-        className="specter-cell"
-        style={{
-          backgroundColor: cellColor || 'transparent'
-        }}
-      />
-    ))}
-  </div>
-</div>
+  // Injecte la pièce actuelle dans la grille pour l'affichage
+  shape.forEach((row, dy) => {
+    row.forEach((cell, dx) => {
+      const x = position.x + dx;
+      const y = position.y + dy;
+      if (cell && y >= 0 && y < 20 && x >= 0 && x < 10) {
+        grid[y][x] = { name }; // 👈 juste { name }, suffisant
+      }
+    });
+  });
 
-	);
+  return (
+    <div className="specter-wrapper">
+      <p className="specter-username">{playerName}</p>
+      <div className="specter-grid">
+        {grid.flat().map((cell, index) => (
+          <div
+            key={index}
+            className="specter-cell"
+            style={{
+              backgroundColor: getCellColor(cell)
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }

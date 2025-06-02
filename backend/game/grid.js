@@ -50,11 +50,11 @@ function isValidMove(grid, piece, posX, posY) {
  */
 function mergePiece(grid, piece, posX, posY) {
   const newGrid = grid.map(row => row.slice());
-  const { shape } = piece;
+  const { shape, name, option } = piece;
   for (let y = 0; y < shape.length; y++) {
     for (let x = 0; x < shape[y].length; x++) {
       if (shape[y][x]) {
-        newGrid[posY + y][posX + x] = 1;
+        newGrid[posY + y][posX + x] = { name, option };
       }
     }
   }

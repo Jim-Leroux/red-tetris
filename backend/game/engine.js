@@ -1,6 +1,6 @@
 
 const { isValidMove, mergePiece, clearLines, addPenaltyLines } = require('./grid');
-const { rotate, getRandomPiece } = require('/shared/tetriminos');
+const { rotate, getRandomPiece } = require('./tetriminos');
 
 /**
  * Crée et gère le cycle de vie du jeu pour une room multijoueur.
@@ -29,18 +29,17 @@ function createGame(io, room, players, sequence) {
 		player.grid = mergePiece(grid, currentPiece, pieceX, pieceY);
 		const { newGrid, linesCleared } = clearLines(player.grid);
 		player.grid = newGrid;
-		console.log(`Player ${player.username} cleared ${linesCleared} lines`);
-    if (linesCleared >= 1) {
-      for (const otherId in players) {
-        if (otherId !== socketId && players[otherId].isAlive) {
-          players[otherId].grid = addPenaltyLines(players[otherId].grid, linesCleared - 1);
-		  console.log(`Added ${linesCleared - 1} penalty lines to player ${players[otherId].username}`);
-          io.to(otherId).emit('penalty', {
-            count: linesCleared
-          });
-        }
-      }
-    }
+		if (linesCleared >= 1) {
+			for (const otherId in players) {
+				if (otherId !== socketId && players[otherId].isAlive) {
+					players[otherId].grid = addPenaltyLines(players[otherId].grid, linesCleared - 1);
+					console.log(`Added ${linesCleared - 1} penalty lines to player ${players[otherId].username}`);
+					io.to(otherId).emit('penalty', {
+					count: linesCleared
+				});
+			}
+		}
+	}
 
 		// Déterminer l'index de la prochaine pièce
 		player.pieceIndex = (player.pieceIndex ?? 0) + 1;
@@ -119,6 +118,7 @@ function createGame(io, room, players, sequence) {
     const rotatedShape = rotate(player.currentPiece.shape);
     if (isValidMove(player.grid, rotatedShape, player.pieceX, player.pieceY)) {
       player.currentPiece.shape = rotatedShape;
+	  console.log(`Player ${player.username} rotated piece to ${player.currentPiece.name}`);
     }
   }
 

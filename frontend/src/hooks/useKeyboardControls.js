@@ -16,12 +16,12 @@ export default function useKeyboardControls() {
 				case 'ArrowLeft':
 					e.preventDefault();
 					dispatch(reverse ? moveRight() : moveLeft());
-					if (!isSolo) socket?.emit(reverse ? 'moveRight' : 'moveLeft', { room });
+					if (!isSolo) socket?.emit('moveLeft', { room });
 					break;
 				case 'ArrowRight':
 					e.preventDefault();
 					dispatch(reverse ? moveLeft() : moveRight());
-					if (!isSolo) socket?.emit(reverse ? 'moveLeft' : 'moveRight', { room });
+					if (!isSolo) socket?.emit('moveRight', { room });
 					break;
 				case 'ArrowDown':
 					e.preventDefault();
