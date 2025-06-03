@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addGarbageLines, pushPieceToQueue, setActivePiece, setIsStarted, setSetting } from "../redux/slices/gameSlice";
-import { addPiece, addPlayers, setPlayers, setSpectre } from "../redux/slices/sessionSlice";
+import { pushPieceToQueue, setActivePiece, setIsStarted, setSetting } from "../redux/slices/gameSlice";
+import { addPlayers, applyPenaltyToSpectre, setPlayers, setServerGrid, setSpectre } from "../redux/slices/sessionSlice";
 import { useSocket } from "../context/WebSocketContext";
 import { getNamePiece } from "../logic/tetriminos";
 
@@ -10,7 +10,7 @@ export default function useSocketListeners() {
 	const socket = useSocket();
 	const dispatch = useDispatch();
 	const room = useSelector(state => state.session.room);
-
+	const me = useSelector(state => state.session.me);
 	useEffect(() => {
 		if (!room) return;
 
@@ -19,7 +19,7 @@ export default function useSocketListeners() {
 		});
 
 		socket?.on('updatePlayer', (player) => {
-			console.log("Player updated", player);
+			// console.log("Player updated", player);
 			dispatch(addPlayers(player));
 		});
 
@@ -37,31 +37,37 @@ export default function useSocketListeners() {
 
 		socket.on('spectersUpdate', (specters) => {
 			Object.entries(specters).forEach(([player, spectre]) => {
-				// if (player == socket.id) return;
+				if (player == socket.id) return;
 				dispatch(setSpectre({ player, spectre }));
 			});
 		});
 
 		socket.on('piece', (piece) => {
-			console.log("Piece received", piece);
+			// console.log("Piece received", piece);
 			dispatch(setActivePiece(getNamePiece(piece.name)));
 		});
 
 		socket.on('queue', (pieces) => {
-			console.log("Queue received", pieces);
+			// console.log("Queue received", pieces);
 			pieces.forEach(piece => {
 				dispatch(pushPieceToQueue(getNamePiece(piece.name)));
 			});
 		})
 
 		socket.on('addQueue', (piece) => {
-			console.log("Piece added to queue", piece);
+			// console.log("Piece added to queue", piece);
 			dispatch(pushPieceToQueue(getNamePiece(piece.name)));
 		}	);
 
 		 socket.on('penalty', ({ count, holes }) => {
-			dispatch(addGarbageLines({ count, holes }));
-			console.log("Penalty received", count);
+			console.log("Penalty received", count, holes);
+			const username = me
+			if (!username) return;
+			console.log("Penalty received", count, holes, "for", username);
+			dispatch(applyPenaltyToSpectre({ username, count: count, holes }));
+		});
+		socket.on('serverGrid', (grid) => {
+			dispatch(setServerGrid(grid));
 		});
 
 		return () => {
@@ -74,6 +80,7 @@ export default function useSocketListeners() {
 			socket.off("queue");
 			socket.off("addQueue");
 			socket.off("penalty");
+			socket.off("serverGrid");
 		};
 	}, [dispatch, room]);
 }

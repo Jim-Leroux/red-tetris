@@ -31,7 +31,8 @@ function isValidMove(grid, piece, posX, posY) {
           newY >= ROWS ||
           newX < 0 ||
           newX >= COLS ||
-          (grid[newY][newX] !== 0 && typeof grid[newY][newX] === 'object')
+          // Bloquant si c'est une cellule non vide (objet) ou une pénalité (9)
+          (typeof grid[newY][newX] === 'object' || grid[newY][newX] === 9)
         ) {
           return false;
         }
@@ -41,6 +42,7 @@ function isValidMove(grid, piece, posX, posY) {
 
   return true;
 }
+
 
 /**
  * Fusionne une pièce dans la grille et retourne la nouvelle grille
@@ -52,7 +54,7 @@ function isValidMove(grid, piece, posX, posY) {
  */
 function mergePiece(grid, piece, posX, posY) {
   const newGrid = grid.map(row => row.slice());
-  const { shape, name, option } = piece;
+  const { shape, name } = piece;
 
   for (let y = 0; y < shape.length; y++) {
     for (let x = 0; x < shape[y].length; x++) {
@@ -63,7 +65,10 @@ function mergePiece(grid, piece, posX, posY) {
           targetY >= 0 && targetY < newGrid.length &&
           targetX >= 0 && targetX < newGrid[0].length
         ) {
-          newGrid[targetY][targetX] = { name, option };
+          const targetCell = newGrid[targetY][targetX];
+          if (targetCell === 0) {
+            newGrid[targetY][targetX] = { name };
+          }
         }
       }
     }
@@ -109,7 +114,7 @@ function calculateSpectre(grid) {
 }
 
 function addPenaltyLines(grid, count) {
-  const newGrid = grid.slice(count); // enlève le haut
+  const newGrid = grid.slice(count); // enlève les lignes du haut
   const holes = [];
 
   for (let i = 0; i < count; i++) {
@@ -120,8 +125,18 @@ function addPenaltyLines(grid, count) {
     newGrid.push(row);
   }
 
-  return { newGrid, holes };
+  // ✅ Si jamais on a trop coupé, on complète avec des lignes vides
+  while (newGrid.length < ROWS) {
+    newGrid.unshift(Array(COLS).fill(0));
+  }
+
+  console.log("Adding penalty lines with holes at columns:", holes);
+  return {
+    grid: newGrid,
+    holes
+  };
 }
+
 
 
 

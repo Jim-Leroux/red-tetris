@@ -38,7 +38,7 @@ const {
 	// ─── UPDATE SETTINGS ─────────────────────────────────────────────────────────
 	socket.on('updateSettings', ({ room, settings }) => {
 	  setRoomSettings(room, settings);
-	  console.log(`🎛 Settings updated for room ${room}:`, settings);
+	//   console.log(`🎛 Settings updated for room ${room}:`, settings);
 	  io.to(room).emit('settingsUpdated', getRoomSettings(room));
 	});
 
@@ -76,10 +76,27 @@ const {
 
 	// ─── DISCONNECT ────────────────────────────────────────────────────────────────
 	socket.on('disconnect', () => {
-	  const room = removePlayer(socket.id);
-	  console.log(`❌ Socket ${socket.id} disconnected from room ${room}`);
-	  if (room) {
-		io.to(room).emit('updatePlayers', getPlayersInRoom(room));
-	  }
+	const room = removePlayer(socket.id);
+	if (room) {
+		const players = getPlayersInRoom(room);
+		io.to(room).emit('updatePlayers', players);
+
+		const game = getGame(room);
+		if (game && game.isRunning) {
+		if (players.length === 1) {
+			game.stop();
+
+			const winner = players[0];
+			io.to(room).emit('gameEnded', {
+			winnerId: winner.socketId,
+			message: `${winner.username} a gagné car l'autre joueur a quitté la partie !`
+			});
+
+			// Optionnel : supprimer la room
+			delete rooms[room];
+		}
+		}
+	}
 	});
+
   };

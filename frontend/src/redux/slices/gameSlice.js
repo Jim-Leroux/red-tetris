@@ -134,26 +134,9 @@ const gameSlice = createSlice({
 			state.isGameOver = false;
 			state.isStarted = false;
 		},
-		addGarbageLines(state, action) {
-			  const { count, holes } = action.payload;
-			  console.log(`Adding ${count} garbage lines`, holes);
-
-			  const newGrid = state.grid.slice(count); // supprime du haut
-
-			  for (let i = 0; i < count; i++) {
-			    const row = Array(10).fill(9);
-			    const hole = holes[i];
-			    row[hole] = 0;
-			    newGrid.push(row);
-			  }
-
-			  state.grid = newGrid;
-		}
-
-
 
 	},
 });
 
-export const { setGrid, setActivePiece, setIsStarted, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, addGarbageLines, pushPieceToQueue } = gameSlice.actions;
+export const { setGrid, setActivePiece, setIsStarted, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, pushPieceToQueue } = gameSlice.actions;
 export default gameSlice.reducer;

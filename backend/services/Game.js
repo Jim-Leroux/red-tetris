@@ -65,7 +65,7 @@ function startGame(io, room) {
 	  player.pieceY = 0;
 	  player.pieceIndex = 0; // ← on commence tous à 0
 	});
-	console.log("First piece", firstPiece);
+	// console.log("First piece", firstPiece);
 
   // Envoyer la première pièce à tous les joueurs
 

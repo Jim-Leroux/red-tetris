@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetGame } from "../../redux/slices/gameSlice";
 import { resetSolo } from "../../redux/slices/soloStatsSlice";
