@@ -44,6 +44,7 @@ const TETRIMINOS = {
  * Retourne une pièce à partir de son nom
  */
 function getNamePiece(name) {
+	if (!TETRIMINOS[name]) throw new Error(`Unknown piece name: ${name}`);
 	return (
 		{	name,
 			shape: TETRIMINOS[name].shape,
