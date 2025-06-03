@@ -87,8 +87,8 @@ function setRoomSettings(room, settings) {
   }
 }
 
-function getRoomSettings(room) {
-  return rooms[room]?.settings || {};
+function getRoom(socketId) {
+  return Object.keys(rooms).find(room => rooms[room].players[socketId]);
 }
 
 function removeRoom(room) {
@@ -98,6 +98,17 @@ function removeRoom(room) {
   }
 }
 
+function setAlive(socketId, isAlive) {
+ const room = getRoom(socketId);
+ if (room && rooms[room]) {
+   const player = rooms[room].players[socketId];
+   if (player) {
+	 player.isAlive = isAlive;
+	 return true;
+   }
+  return false;
+}}
+
 module.exports = {
   addPlayerToRoom,
   removePlayer,
@@ -105,6 +116,7 @@ module.exports = {
   startGame,
   getGame,
   setRoomSettings,
-  getRoomSettings,
-  removeRoom
+  getRoom,
+  removeRoom,
+  setAlive
 };

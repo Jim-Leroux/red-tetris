@@ -84,7 +84,6 @@ function createGame(io, room, players, sequence) {
 				if (!isValidMove(player.grid, piece, 3, 0)) {
 					player.isAlive = false;
 					io.to(socketId).emit('gameOver');
-					removePlayer(socketId)
 					continue;
 				}
 

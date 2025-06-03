@@ -2,10 +2,10 @@ const {
 	addPlayerToRoom,
 	removePlayer,
 	getPlayersInRoom,
-	setRoomSettings,
-	getRoomSettings,
 	startGame,
-	getGame
+	getGame,
+	getRoom,
+	setAlive
   } = require('../services/Game');
   const crypto = require('crypto');
 
@@ -36,12 +36,6 @@ const {
 	});
 
 	// ─── UPDATE SETTINGS ─────────────────────────────────────────────────────────
-	socket.on('updateSettings', ({ room, settings }) => {
-	  setRoomSettings(room, settings);
-	//   console.log(`🎛 Settings updated for room ${room}:`, settings);
-	  io.to(room).emit('settingsUpdated', getRoomSettings(room));
-	});
-
 	// ─── START GAME ───────────────────────────────────────────────────────────────
 	socket.on('startGame', ({ room }) => {
 	  startGame(io, room);
@@ -76,29 +70,43 @@ const {
 
 	// ─── DISCONNECT ────────────────────────────────────────────────────────────────
 	socket.on('disconnect', () => {
-    const room = removePlayer(socket.id);
-    if (room) {
-        const players = getPlayersInRoom(room);
+	console.log(`📡 Socket ${socket.id} disconnected`);
 
-        if (players.length === 1) {
-        const winner = players[0];
+	const room = getRoom(socket.id);
+	console.log(`🏠 Room found for socket ${socket.id}: ${room}`);
 
-        // Arrêter la partie si elle existe
-        const game = getGame(room);
-        if (game) {
-            game.stop();
-        }
+	setAlive(socket.id, false);
+	console.log(`🧍‍♂️ Set alive to false for ${socket.id}`);
 
-        // Annoncer la fin de la partie avec le gagnant
-        io.to(winner.socketId).emit('gameEnded');
+	if (!room) {
+		console.log(`❌ No room found for socket ${socket.id}`);
+		return;
+	}
 
-        // (Optionnel) nettoyer la room si tu veux
-        // delete rooms[room];
-        } else {
-        // Sinon, juste mettre à jour la liste des joueurs restants
-        io.to(room).emit('updatePlayers', players);
-        }
-    }
-    });
+	let players = getPlayersInRoom(room);
+	console.log(`👥 Players in room before filter:`, players);
 
-  };
+	players = players.filter(p => p.alive);
+	console.log(`✅ Alive players in room ${room}:`, players.map(p => p.username));
+
+	if (players.length === 1) {
+		const winner = players[0];
+		console.log(`🏆 Winner detected: ${winner.username}`);
+
+		const game = getGame(room);
+		if (game) {
+			console.log(`🛑 Stopping game for room ${room}`);
+			game.stop();
+		} else {
+			console.log(`⚠️ No active game found for room ${room}`);
+		}
+
+		io.to(room).emit('gameEnded', { winner: winner.username });
+		console.log(`📣 Emitted gameEnded to room ${room}`);
+	} else {
+		console.log(`🔄 More than 1 player remaining, updating players list`);
+		io.to(room).emit('updatePlayers', players);
+	}
+});
+
+}

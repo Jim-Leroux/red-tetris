@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { pushPieceToQueue, setActivePiece, setIsStarted, setSetting } from "../redux/slices/gameSlice";
-import { addPlayers, applyPenaltyToSpectre, setPlayers, setServerGrid, setSpectre } from "../redux/slices/sessionSlice";
+import { addPlayers, applyPenaltyToSpectre, setPlayers, setServerGrid, setSpectre, setWinner } from "../redux/slices/sessionSlice";
 import { useSocket } from "../context/WebSocketContext";
 import { getNamePiece } from "../logic/tetriminos";
 
@@ -27,13 +27,6 @@ export default function useSocketListeners() {
 			dispatch(setIsStarted(true));
 		});
 
-		socket?.on('settingsUpdated',  (settings => {
-			if (!settings || typeof settings !== 'object') return;
-			Object.entries(settings).forEach(([key, value]) => {
-				dispatch(setSetting({ name: key, value }));
-			});
-			}
-		))
 
 		socket.on('spectersUpdate', (specters) => {
 			Object.entries(specters).forEach(([player, spectre]) => {
@@ -91,7 +84,6 @@ export default function useSocketListeners() {
 			socket.off("updatePlayers");
 			socket.off("updatePlayer");
 			socket.off("gameStarted");
-			socket.off("settingsUpdated");
 			socket.off("spectersUpdate");
 			socket.off("piece");
 			socket.off("queue");

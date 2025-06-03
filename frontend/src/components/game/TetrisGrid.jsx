@@ -22,7 +22,8 @@ export default function TetrisGrid() {
 	const serverGrid = useSelector((state) => state.session.serverGrid);
 	const grid = isSolo ? clientGrid : serverGrid || clientGrid;
 
-	const { shape, position, option } = useSelector((state) => state.game.activePiece);
+	const { shape = [], position = { x: 0, y: 0 }, option = {} } = useSelector((state) => state.game.activePiece) || {};
+
 	const invisible = useSelector((state) => state.game.settings.invisiblePieces);
 	const tick = useSelector((state) => state.game.invisibleTick);
 

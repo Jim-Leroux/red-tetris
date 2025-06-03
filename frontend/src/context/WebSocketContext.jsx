@@ -7,7 +7,7 @@ export default function WebSocketProvider({ children }) {
 	const [socket, setSocket] = useState(undefined)
 
 	useEffect(() => {
-		const socketIOClient = io(`http://f6r3s5.clusters.42paris.fr:3000`);
+		const socketIOClient = io();
 		socketIOClient.on('connect', () => {
 			setSocket(socketIOClient);
 		})

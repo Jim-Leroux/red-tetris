@@ -17,10 +17,7 @@ export default function Game() {
 	const isStarted = useSelector((state) => state.game.isStarted);
 	const [waitingToStart, setWaitingToStart] = useState(true);
 
-	useGameLoop();
 	useKeyboardControls();
-	useScoreUpdater();
-	useGameEnd();
 	useSocketListeners();
 
 	if (!isStarted && waitingToStart) {
