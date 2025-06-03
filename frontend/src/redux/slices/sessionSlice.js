@@ -8,6 +8,7 @@ const initialState = {
 	players: [],
 	spectres: {},
 	serverGrid: null,
+	winner: false
 };
 
 const sessionSlice =  createSlice({
@@ -17,6 +18,7 @@ const sessionSlice =  createSlice({
 		setRoom(state, action){
 			state.room = action.payload
 		},
+
 		setServerGrid(state, action) {
 			state.serverGrid = action.payload;
 		},
@@ -70,10 +72,13 @@ const sessionSlice =  createSlice({
 			}
 
 			spectre.grid = newGrid;
+		},
+		setWinner(state, action) {
+			state.winner = action.payload;
 		}
 
 	},
 })
 
-export const { setRoom, setServerGrid, setMe, setIsHost, setIsSolo, setPlayers, addPlayers, setSpectre, removeSpectre, resetSession, applyPenaltyToSpectre } = sessionSlice.actions;
+export const { setRoom, setServerGrid, setMe, setIsHost, setIsSolo, setPlayers, addPlayers, setSpectre, removeSpectre, resetSession, applyPenaltyToSpectre, setWinner } = sessionSlice.actions;
 export default sessionSlice.reducer;

@@ -70,6 +70,23 @@ export default function useSocketListeners() {
 			dispatch(setServerGrid(grid));
 		});
 
+		socket.on('gameEnded', () => {
+			dispatch(setIsStarted(false));
+			dispatch(setActivePiece(null));
+			dispatch(setPlayers([]));
+			dispatch(setServerGrid(null));
+			dispatch(setSpectre({ player: me, spectre: null }));
+			dispatch(setWinner(true));
+		})
+		socket.on('gameOver', ()=> {
+			dispatch(setIsStarted(false));
+			dispatch(setServerGrid(null));
+			dispatch(setSpectre({ player: me, spectre: null }));
+			dispatch(setPlayers([]));
+			dispatch(setActivePiece(null));
+			dispatch(setWinner(false));
+		})
+
 		return () => {
 			socket.off("updatePlayers");
 			socket.off("updatePlayer");
@@ -81,6 +98,8 @@ export default function useSocketListeners() {
 			socket.off("addQueue");
 			socket.off("penalty");
 			socket.off("serverGrid");
+			socket.off("gameEnded");
+			socket.off("gameOver");
 		};
 	}, [dispatch, room]);
 }

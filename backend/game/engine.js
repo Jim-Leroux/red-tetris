@@ -1,6 +1,6 @@
 const { isValidMove, mergePiece, clearLines, addPenaltyLines } = require('./grid');
 const { rotate, getRandomPiece } = require('./tetriminos');
-
+const { removeRoom, removePlayer } = require('../services/Game.js')
 /**
  * Dessine une pièce dans une copie de la grille sans modifier l'original.
  */
@@ -84,6 +84,7 @@ function createGame(io, room, players, sequence) {
 				if (!isValidMove(player.grid, piece, 3, 0)) {
 					player.isAlive = false;
 					io.to(socketId).emit('gameOver');
+					removePlayer(socketId)
 					continue;
 				}
 
@@ -114,7 +115,7 @@ function createGame(io, room, players, sequence) {
 
 		if (!Object.values(players).some(p => p.isAlive)) {
 			clearInterval(interval);
-			io.to(room).emit('allPlayersGameOver');
+			removeRoom(room)
 		}
 	}
 

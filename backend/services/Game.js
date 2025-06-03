@@ -91,6 +91,13 @@ function getRoomSettings(room) {
   return rooms[room]?.settings || {};
 }
 
+function removeRoom(room) {
+  if (rooms[room]) {
+    rooms[room].game?.stop();
+    delete rooms[room];
+  }
+}
+
 module.exports = {
   addPlayerToRoom,
   removePlayer,
@@ -98,5 +105,6 @@ module.exports = {
   startGame,
   getGame,
   setRoomSettings,
-  getRoomSettings
+  getRoomSettings,
+  removeRoom
 };

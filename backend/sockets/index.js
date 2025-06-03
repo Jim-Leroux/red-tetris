@@ -76,27 +76,29 @@ const {
 
 	// ─── DISCONNECT ────────────────────────────────────────────────────────────────
 	socket.on('disconnect', () => {
-	const room = removePlayer(socket.id);
-	if (room) {
-		const players = getPlayersInRoom(room);
-		io.to(room).emit('updatePlayers', players);
+    const room = removePlayer(socket.id);
+    if (room) {
+        const players = getPlayersInRoom(room);
 
-		const game = getGame(room);
-		if (game && game.isRunning) {
-		if (players.length === 1) {
-			game.stop();
+        if (players.length === 1) {
+        const winner = players[0];
 
-			const winner = players[0];
-			io.to(room).emit('gameEnded', {
-			winnerId: winner.socketId,
-			message: `${winner.username} a gagné car l'autre joueur a quitté la partie !`
-			});
+        // Arrêter la partie si elle existe
+        const game = getGame(room);
+        if (game) {
+            game.stop();
+        }
 
-			// Optionnel : supprimer la room
-			delete rooms[room];
-		}
-		}
-	}
-	});
+        // Annoncer la fin de la partie avec le gagnant
+        io.to(winner.socketId).emit('gameEnded');
+
+        // (Optionnel) nettoyer la room si tu veux
+        // delete rooms[room];
+        } else {
+        // Sinon, juste mettre à jour la liste des joueurs restants
+        io.to(room).emit('updatePlayers', players);
+        }
+    }
+    });
 
   };
