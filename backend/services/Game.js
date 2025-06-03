@@ -72,7 +72,7 @@ function startGame(io, room) {
 	io.to(room).emit('piece', firstPiece);
 	io.to(room).emit('queue', roomObj.sequence.slice(1, 6));
   // Créer et démarrer le moteur de jeu
-  const game = createGame(io, room, roomObj.players, roomObj.sequence);
+  const game = createGame(io, room, roomObj.players, roomObj.sequence, removeRoom);
   roomObj.game = game;
   game.start();
 }

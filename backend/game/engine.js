@@ -1,6 +1,5 @@
 const { isValidMove, mergePiece, clearLines, addPenaltyLines } = require('./grid');
 const { rotate, getRandomPiece } = require('./tetriminos');
-const { removeRoom, removePlayer } = require('../services/Game.js')
 /**
  * Dessine une pièce dans une copie de la grille sans modifier l'original.
  */
@@ -24,7 +23,8 @@ function renderPieceInGrid(grid, shape, position, name, option = {}) {
 	return newGrid;
 }
 
-function createGame(io, room, players, sequence) {
+
+function createGame(io, room, players, sequence, removeRoom) {
 	let interval = null;
 	let isRunning = false;
 
