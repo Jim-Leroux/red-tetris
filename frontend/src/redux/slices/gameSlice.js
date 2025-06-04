@@ -134,9 +134,11 @@ const gameSlice = createSlice({
 			state.isGameOver = false;
 			state.isStarted = false;
 		},
-
+		setpieceQueue(state, action) {
+			state.pieceQueue = action.payload;
+		}
 	},
 });
 
-export const { setGrid, setActivePiece, setIsStarted, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, pushPieceToQueue } = gameSlice.actions;
+export const { setGrid, setActivePiece, setIsStarted, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, pushPieceToQueue, setpieceQueue } = gameSlice.actions;
 export default gameSlice.reducer;
