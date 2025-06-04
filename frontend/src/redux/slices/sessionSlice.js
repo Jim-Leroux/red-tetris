@@ -7,6 +7,8 @@ const initialState = {
 	isSolo: false,
 	players: [],
 	spectres: {},
+	serverGrid: null,
+	isWinner: false
 };
 
 const sessionSlice =  createSlice({
@@ -16,6 +18,11 @@ const sessionSlice =  createSlice({
 		setRoom(state, action){
 			state.room = action.payload
 		},
+
+		setServerGrid(state, action) {
+			state.serverGrid = action.payload;
+		},
+
 		setMe(state, action) {
 			state.me = action.payload;
 		},
@@ -45,9 +52,35 @@ const sessionSlice =  createSlice({
 			state.isSolo = false;
 			state.players = [];
 			state.spectres = {};
+			state.serverGrid = null;
+			state.isWinner = false;
+		},
+		applyPenaltyToSpectre(state, action) {
+			const { username, count, holes } = action.payload;
+
+			const spectre = state.spectres[username];
+			if (!spectre || !spectre.grid) return;
+
+			const newGrid = spectre.grid.slice();
+
+			for (let i = 0; i < count; i++) {
+				const row = Array(10).fill(9);
+				const hole = holes[i];
+				if (hole >= 0 && hole < 10) {
+					row[hole] = 0;
+				}
+				newGrid.shift();
+				newGrid.push(row);
+			}
+
+			spectre.grid = newGrid;
+		},
+		setWinner(state, action) {
+			state.isWinner = action.payload;
 		}
+
 	},
 })
 
-export const { setRoom, setMe, setIsHost, setIsSolo, setPlayers, addPlayers, setSpectre, removeSpectre, resetSession } = sessionSlice.actions;
+export const { setRoom, setServerGrid, setMe, setIsHost, setIsSolo, setPlayers, addPlayers, setSpectre, removeSpectre, resetSession, applyPenaltyToSpectre, setWinner } = sessionSlice.actions;
 export default sessionSlice.reducer;

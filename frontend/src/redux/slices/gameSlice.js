@@ -134,15 +134,9 @@ const gameSlice = createSlice({
 			state.isGameOver = false;
 			state.isStarted = false;
 		},
-		addGarbageLines(state, action) {
-			const numberOfLines = action.payload;
-			const garbageLine = Array(10).fill({ value: 9, option: { color: '#333' } });
-			const newLines = Array(numberOfLines).fill(garbageLine);
-			state.grid = [...state.grid.slice(numberOfLines), ...newLines];
-		}
 
 	},
 });
 
-export const { setGrid, setActivePiece, setIsStarted, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, addGarbageLines, pushPieceToQueue } = gameSlice.actions;
+export const { setGrid, setActivePiece, setIsStarted, setSetting, setGameOver, moveDown, moveLeft, moveRight, softDrop, rotate, hardDrop, resetGame, pushPieceToQueue } = gameSlice.actions;
 export default gameSlice.reducer;

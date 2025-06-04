@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSetting } from "../../redux/slices/gameSlice";
 
@@ -15,7 +14,7 @@ export default function SettingsPanel() {
 	const settings = useSelector((state) => state.game.settings);
 
 	return (
-		<div>
+		<div className="settings-panel">
 			<h3>Paramètres de jeu</h3>
 			{SETTINGS.map(({ label, key }) => (
 				<label key={key} style={{ display: 'block', marginBottom: 6 }}>

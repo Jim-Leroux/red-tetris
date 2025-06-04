@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addGarbageLines, pushPieceToQueue, setActivePiece, setIsStarted, setSetting } from "../redux/slices/gameSlice";
-import { addPiece, addPlayers, setPlayers, setSpectre } from "../redux/slices/sessionSlice";
+import { pushPieceToQueue, setActivePiece, setGameOver, setIsStarted, setSetting } from "../redux/slices/gameSlice";
+import { addPlayers, applyPenaltyToSpectre, setPlayers, setServerGrid, setSpectre, setWinner } from "../redux/slices/sessionSlice";
 import { useSocket } from "../context/WebSocketContext";
 import { getNamePiece } from "../logic/tetriminos";
 
@@ -10,7 +10,7 @@ export default function useSocketListeners() {
 	const socket = useSocket();
 	const dispatch = useDispatch();
 	const room = useSelector(state => state.session.room);
-
+	const me = useSelector(state => state.session.me);
 	useEffect(() => {
 		if (!room) return;
 
@@ -19,7 +19,7 @@ export default function useSocketListeners() {
 		});
 
 		socket?.on('updatePlayer', (player) => {
-			console.log("Player updated", player);
+			// console.log("Player updated", player);
 			dispatch(addPlayers(player));
 		});
 
@@ -27,52 +27,63 @@ export default function useSocketListeners() {
 			dispatch(setIsStarted(true));
 		});
 
-		socket?.on('settingsUpdated',  (settings => {
-			if (!settings || typeof settings !== 'object') return;
-			// console.log("Settings updated", settings);
-			Object.entries(settings).forEach(([key, value]) => {
-				dispatch(setSetting({ name: key, value }));
-			});
-			}
-		))
 
 		socket.on('spectersUpdate', (specters) => {
-			// console.log("Specters updated", specters);
 			Object.entries(specters).forEach(([player, spectre]) => {
 				if (player == socket.id) return;
-				// console.log("Specter for player", player, spectre);
 				dispatch(setSpectre({ player, spectre }));
 			});
 		});
 
-		socket.on("nextPiece", (piece) => {
-			console.log("Next piece received", piece);
-			dispatch(pushPieceToQueue(getNamePiece(piece.name)));
-		});
-
 		socket.on('piece', (piece) => {
-			console.log("Piece received", piece);
+			// console.log("Piece received", piece);
 			dispatch(setActivePiece(getNamePiece(piece.name)));
 		});
 
-		// socket.on("receive-penalty", ({ count }) => {
-		// 	dispatch(addGarbageLines(count));
-		// });
+		socket.on('queue', (pieces) => {
+			// console.log("Queue received", pieces);
+			pieces.forEach(piece => {
+				dispatch(pushPieceToQueue(getNamePiece(piece.name)));
+			});
+		})
 
-		// socket.on("specter-update", ({ player, spectre }) => {
-		// 	dispatch(setSpectre({ player, spectre }));
-		// });
+		socket.on('addQueue', (piece) => {
+			// console.log("Piece added to queue", piece);
+			dispatch(pushPieceToQueue(getNamePiece(piece.name)));
+		}	);
 
-		// Tu peux ajouter d’autres socket.on ici...
+		 socket.on('penalty', ({ count, holes }) => {
+			console.log("Penalty received", count, holes);
+			const username = me
+			if (!username) return;
+			console.log("Penalty received", count, holes, "for", username);
+			dispatch(applyPenaltyToSpectre({ username, count: count, holes }));
+		});
+		socket.on('serverGrid', (grid) => {
+			dispatch(setServerGrid(grid));
+		});
+
+		socket.on('gameEnded', () => {
+			dispatch(setGameOver(true));
+			dispatch(setWinner(true));
+		})
+		socket.on('gameOver', ()=> {
+			dispatch(setGameOver(true));
+			dispatch(setWinner(false));
+		})
 
 		return () => {
 			socket.off("updatePlayers");
 			socket.off("updatePlayer");
 			socket.off("gameStarted");
-			socket.off("settingsUpdated");
-			// socket.off("receive-penalty");
-			// socket.off("specter-update");
-			// Pense à nettoyer les autres aussi
+			socket.off("spectersUpdate");
+			socket.off("piece");
+			socket.off("queue");
+			socket.off("addQueue");
+			socket.off("penalty");
+			socket.off("serverGrid");
+			socket.off("gameEnded");
+			socket.off("gameOver");
 		};
 	}, [dispatch, room]);
 }

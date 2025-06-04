@@ -1,13 +1,11 @@
 const {
 	addPlayerToRoom,
-	removePlayer,
-	getPlayersInRoom,
-	setRoomSettings,
-	getRoomSettings,
 	startGame,
-	getGame
   } = require('../services/Game');
+
+
   const crypto = require('crypto');
+const { getPlayersInRoom, setAlive, getRoom, getGame, removePlayer, removeRoom, rooms } = require('../services/room');
 
   module.exports = (io, socket) => {
 	// ─── JOIN ROOM ────────────────────────────────────────────────────────────────
@@ -36,12 +34,6 @@ const {
 	});
 
 	// ─── UPDATE SETTINGS ─────────────────────────────────────────────────────────
-	socket.on('updateSettings', ({ room, settings }) => {
-	  setRoomSettings(room, settings);
-	  console.log(`🎛 Settings updated for room ${room}:`, settings);
-	  io.to(room).emit('settingsUpdated', getRoomSettings(room));
-	});
-
 	// ─── START GAME ───────────────────────────────────────────────────────────────
 	socket.on('startGame', ({ room }) => {
 	  startGame(io, room);
@@ -74,12 +66,63 @@ const {
 	  game?.hardDrop(socket.id);
 	});
 
-	// ─── DISCONNECT ────────────────────────────────────────────────────────────────
-	socket.on('disconnect', () => {
-	  const room = removePlayer(socket.id);
-	  console.log(`❌ Socket ${socket.id} disconnected from room ${room}`);
-	  if (room) {
-		io.to(room).emit('updatePlayers', getPlayersInRoom(room));
+
+	// ─── LEAVE ROOM ───────────────────────────────────────────────────────────────
+	socket.on('leave', () => {
+		console.log(`📡 Socket ${socket.id} requested to leave`);
+	const room = getRoom(socket.id);
+
+	  if (room && rooms[room].isStart === false) {
+
+		removePlayer(socket.id);
+		socket.leave(room);
+
+		const players = getPlayersInRoom(room);
+
+		if (players.length === 0) {
+		  console.log(`❌ No players left in room ${room}, removing room`);
+		  io.to(room).emit('gameEnded', { winner: null });
+		  // Remove the room if no players left
+		  removeRoom(room);
+		} else {
+		  io.to(room).emit('updatePlayers', players);
+		}
+	  } else {
+		console.log(`⚠️ No room found for socket ${socket.id}`);
 	  }
 	});
-  };
+	// ─── DISCONNECT ────────────────────────────────────────────────────────────────
+	socket.on('disconnect', () => {
+	console.log(`📡 Socket ${socket.id} disconnected`);
+	const room = getRoom(socket.id);
+
+	if (!room) {
+		console.log(`❌ No room found for socket ${socket.id}`);
+		return;
+	}
+	setAlive(socket.id, false);
+	let players = getPlayersInRoom(room);
+	players = players.filter(p => p.isAlive);
+
+	if (players.length === 1) {
+		const winner = players[0];
+
+		const game = getGame(room);
+		if (game) {
+			game.stop();
+		} else {
+			console.log(`⚠️ No active game found for room ${room}`);
+		}
+
+		io.to(room).emit('gameEnded', { winner: winner.username });
+
+	} else
+	if (players.length === 0) {
+		console.log(`❌ No players left in room ${room}, removing room`);
+		removeRoom(room);
+	} else {
+		io.to(room).emit('updatePlayers', players);
+	}
+});
+
+}

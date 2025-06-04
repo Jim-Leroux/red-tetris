@@ -121,3 +121,147 @@
 	margin-top: 20px;
 	cursor: pointer;
 }
+
+
+/* Conteneur général des prochaines pièces */
+.game-piece {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 20px;
+}
+
+/* Titre */
+.game-piece-label {
+	color: #38bdf8;
+	text-shadow: 0 0 4px #0ff;
+	font-size: 1rem;
+	margin-bottom: 5px;
+}
+
+/* Chaque pièce (4x4 max) */
+.game-piece-preview {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+/* Chaque ligne dans une pièce */
+.game-piece-row {
+	display: flex;
+	gap: 2px;
+}
+
+/* Cellule individuelle */
+.game-piece-cell {
+	width: var(--cell-size);
+	height: var(--cell-size);
+	border-radius: 3px;
+	box-sizing: border-box;
+	transition: all 0.1s ease;
+	background-color: transparent;
+}
+
+
+.game-box-horizontal {
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-start; /* aligne à gauche */
+	flex-wrap: wrap;
+	gap: 30px;
+}
+
+/* SpecterPanel à droite */
+.specter-panel {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	max-width: 600px;
+}
+
+
+
+
+
+
+
+.specter-wrapper {
+	margin: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.specter-username {
+	font-weight: bold;
+	font-size: 0.75rem;
+	text-align: center;
+	color: #38bdf8;
+	text-shadow: 0 0 3px #0ff;
+	margin-bottom: 4px;
+}
+
+.specter-grid {
+	display: grid;
+	grid-template-columns: repeat(10, 10px);
+	grid-template-rows: repeat(20, 10px);
+	gap: 1px;
+	border: 1px solid #444;
+	background-color: rgba(255, 255, 255, 0.03);
+	border-radius: 4px;
+	box-shadow: 0 0 6px rgba(56, 189, 248, 0.2);
+}
+
+.specter-cell {
+	width: 10px;
+	height: 10px;
+	border: 1px solid #222;
+	box-sizing: border-box;
+}
+
+.specter-panel {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #38bdf8;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+  color: white;
+  font-size: 0.95rem;
+  text-shadow: 0 0 2px #0ff;
+  min-width: 220px;
+  max-width: 300px;
+}
+
+.settings-panel h3 {
+  font-size: 1.2rem;
+  color: #38bdf8;
+  text-shadow: 0 0 4px #0ff;
+  margin-bottom: 10px;
+}
+
+.settings-panel label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.settings-panel input[type="checkbox"] {
+  transform: scale(1.1);
+  accent-color: #38bdf8;
+  cursor: pointer;
+}

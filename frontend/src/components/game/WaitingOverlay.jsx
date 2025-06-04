@@ -1,7 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect, useRef } from "react";
 import { useSocket } from "../../context/WebSocketContext";
-import SettingsPanel from "./SettingsPanel";
 
 export default function WaitingOverlay({ setWaitingToStart }) {
 	const socket = useSocket();
@@ -41,7 +40,7 @@ export default function WaitingOverlay({ setWaitingToStart }) {
 				</ul>
 				{isHost ? (
 					<>
-						<SettingsPanel />
+						<p>Room name =  {room}</p>
 						<p>Appuie sur <strong>Entrée</strong> pour lancer la partie</p>
 					</>
 				) : (

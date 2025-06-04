@@ -3,7 +3,7 @@ export const TETRIMINOS = {
 		shape: [[1, 1, 1, 1]],
 		option: {
 			color: '#00ffff',
-			boxShadow: '0 0 10px #00ffff',
+			// boxShadow: '0 0 10px #00ffff',
 		},
 	},
 	O: {
@@ -13,7 +13,7 @@ export const TETRIMINOS = {
 		],
 		option: {
 			color: '#ffff00',
-			boxShadow: '0 0 10px #ffff00',
+			// boxShadow: '0 0 10px #ffff00',
 		},
 	},
 	T: {
@@ -23,7 +23,7 @@ export const TETRIMINOS = {
 		],
 		option: {
 			color: '#a020f0',
-			boxShadow: '0 0 10px #a020f0',
+			// boxShadow: '0 0 10px #a020f0',
 		},
 	},
 	S: {
@@ -33,7 +33,7 @@ export const TETRIMINOS = {
 		],
 		option: {
 			color: '#00ff00',
-			boxShadow: '0 0 10px #00ff00',
+			// boxShadow: '0 0 10px #00ff00',
 		},
 	},
 	Z: {
@@ -43,7 +43,7 @@ export const TETRIMINOS = {
 		],
 		option: {
 			color: '#ff0000',
-			boxShadow: '0 0 10px #ff0000',
+			// boxShadow: '0 0 10px #ff0000',
 		},
 	},
 	J: {
@@ -53,7 +53,7 @@ export const TETRIMINOS = {
 		],
 		option: {
 			color: '#0000ff',
-			boxShadow: '0 0 10px #0000ff',
+			// boxShadow: '0 0 10px #0000ff',
 		},
 	},
 	L: {
@@ -63,7 +63,7 @@ export const TETRIMINOS = {
 		],
 		option: {
 			color: '#ffa500',
-			boxShadow: '0 0 10px #ffa500',
+			// boxShadow: '0 0 10px #ffa500',
 		},
 	}
 };

@@ -15,28 +15,23 @@ export default function useKeyboardControls() {
 			switch (e.key) {
 				case 'ArrowLeft':
 					e.preventDefault();
-					dispatch(reverse ? moveRight() : moveLeft());
-					if (!isSolo) socket?.emit(reverse ? 'moveRight' : 'moveLeft', { room });
+					if (!isSolo) socket?.emit('moveLeft', { room }); else dispatch(reverse ? moveRight() : moveLeft());
 					break;
 				case 'ArrowRight':
 					e.preventDefault();
-					dispatch(reverse ? moveLeft() : moveRight());
-					if (!isSolo) socket?.emit(reverse ? 'moveLeft' : 'moveRight', { room });
+					if (!isSolo) socket?.emit('moveRight', { room }); else dispatch(reverse ? moveLeft() : moveRight());
 					break;
 				case 'ArrowDown':
 					e.preventDefault();
-					dispatch(softDrop());
-					if (!isSolo) socket?.emit('softDrop', { room });
+					if (!isSolo) socket?.emit('softDrop', { room }); else dispatch(softDrop());
 					break;
 				case 'ArrowUp':
 					e.preventDefault();
-					dispatch(rotate());
-					if (!isSolo) socket?.emit('rotate', { room });
+					if (!isSolo) socket?.emit('rotate', { room }); else dispatch(rotate());
 					break;
 				case ' ':
 					e.preventDefault();
-					dispatch(hardDrop());
-					if (!isSolo) socket?.emit('hardDrop', { room });
+					if (!isSolo) socket?.emit('hardDrop', { room }); else dispatch(hardDrop());
 					break;
 				default:
 					break;

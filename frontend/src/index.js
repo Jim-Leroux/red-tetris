@@ -11,13 +11,15 @@ import WebSocketProvider from './context/WebSocketContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	// <React.StrictMode>
-		<WebSocketProvider>
-			<BrowserRouter>
+
+		<BrowserRouter>
+			<WebSocketProvider>
 				<Provider store={store}>
 					<App />
 				</Provider>
-			</BrowserRouter>
-		</WebSocketProvider>
+			</WebSocketProvider>
+		</BrowserRouter>
+
 	// </React.StrictMode>
 );
 

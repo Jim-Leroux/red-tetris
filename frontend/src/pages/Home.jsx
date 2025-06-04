@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UsernameInput from "../components/home/UsernameInput";
 import ModeSelector from "../components/home/ModeSelector";
@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 import { setIsSolo, setMe, setRoom, setIsHost, setPlayers } from "../redux/slices/sessionSlice";
 import { resetGame } from "../redux/slices/gameSlice";
 import { resetSolo } from "../redux/slices/soloStatsSlice";
-import { resetMultiplayerStats } from "../redux/slices/multiplayerStatsSlice";
 import "./home.css"
 import { useSocket } from "../context/WebSocketContext";
 
@@ -41,7 +40,6 @@ export default function Home() {
 					dispatch(setIsHost(isHost));
 					dispatch(setRoom(room));
 					dispatch(resetGame());
-					dispatch(resetMultiplayerStats());
 					dispatch(setPlayers(players));
 					navigate(`/${room}/${username}`);
 				}
