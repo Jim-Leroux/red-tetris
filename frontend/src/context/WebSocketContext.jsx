@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { io } from "socket.io-client";
 
 const WebSocketContext = createContext(undefined);
 
 export default function WebSocketProvider({ children }) {
 	const [socket, setSocket] = useState(undefined)
+
 
 	useEffect(() => {
 		const socketIOClient = io();
@@ -17,6 +18,7 @@ export default function WebSocketProvider({ children }) {
 		}
 	}, []);
 	const value = useMemo(() => socket, [socket]);
+
 	return (
 		<WebSocketContext.Provider value={value}>
 			{children}

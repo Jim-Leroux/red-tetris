@@ -1,3 +1,4 @@
+const { removeRoom, rooms } = require('../services/room');
 const { isValidMove, mergePiece, clearLines, addPenaltyLines } = require('./grid');
 const { rotate, getRandomPiece } = require('./tetriminos');
 /**
@@ -24,7 +25,7 @@ function renderPieceInGrid(grid, shape, position, name, option = {}) {
 }
 
 
-function createGame(io, room, players, sequence, removeRoom) {
+function createGame(io, room, players, sequence) {
 	let interval = null;
 	let isRunning = false;
 
@@ -83,6 +84,7 @@ function createGame(io, room, players, sequence, removeRoom) {
 
 				if (!isValidMove(player.grid, piece, 3, 0)) {
 					player.isAlive = false;
+					console.log(`Player ${player.username} (${socketId}) is dead`);
 					io.to(socketId).emit('gameOver');
 					continue;
 				}
@@ -112,6 +114,18 @@ function createGame(io, room, players, sequence, removeRoom) {
 
 		io.to(room).emit('spectersUpdate', specters);
 
+		const alivePlayers = Object.values(players).filter(p => p.isAlive);
+
+		if (alivePlayers.length === 1) {
+			const winner = alivePlayers[0];
+			console.log(`🎉 Winner is ${winner.username}`);
+			io.to(winner.socketId).emit('gameEnded', { winner: winner.username });
+
+			clearInterval(interval);
+			removeRoom(room);
+			return;
+		}
+
 		if (!Object.values(players).some(p => p.isAlive)) {
 			clearInterval(interval);
 			removeRoom(room)
@@ -123,6 +137,7 @@ function createGame(io, room, players, sequence, removeRoom) {
 		interval = setInterval(tick, 500);
 		isRunning = true;
 		}
+		rooms[room].isStart = true;
 	}
 
 	function stop() {

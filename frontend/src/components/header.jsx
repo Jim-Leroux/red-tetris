@@ -9,7 +9,6 @@ export default function  Header() {
 				<h1 className="logo">TETRIS GALACTIQUE</h1>
 				<nav>
 					<Link to={'/'} className="nav-link">Accueil</Link>
-					<Link to={'/dashboard'} className="nav-link">Dashboard</Link>
 				</nav>
 			</div>
 		</header>

@@ -2,14 +2,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetGame } from "../../redux/slices/gameSlice";
 import { resetSolo } from "../../redux/slices/soloStatsSlice";
 import { useNavigate } from "react-router-dom";
+import { resetSession } from "../../redux/slices/sessionSlice";
 
 export default function GameOverOverlay() {
 	const dispatch = useDispatch();
 	const isGameOver = useSelector((state) => state.game.isGameOver);
 	const isSolo = useSelector((state) => state.session.isSolo);
 	const isHost = useSelector((state) => state.session.isHost);
-	const room = useSelector((state) => state.session.room);
-	const winner = useSelector((state) => state.session.winner);
+	const isWinner = useSelector((state) => state.session.isWinner);
 
 	const navigate = useNavigate();
 
@@ -20,9 +20,8 @@ export default function GameOverOverlay() {
 
 	const handleReturnToLobby = () => {
 		navigate('/');
+		dispatch(resetSession());
 	};
-
-	const isWinner = !isSolo && winner === room;
 
 	if (!isGameOver) return null;
 
@@ -52,33 +51,30 @@ export default function GameOverOverlay() {
 				}`}
 			</style>
 
+			<h1 style={{ ...textStyle, fontSize: 48, marginBottom: 20 }}>
+				{isSolo || !isWinner ? '💀 Game Over' : '🎉 Vous avez gagné !'}
+			</h1>
+
 			{isSolo ? (
 				<>
-					<h1 style={{ ...textStyle, fontSize: 48, marginBottom: 20 }}>💀 Game Over</h1>
 					<button onClick={handleRetry} style={buttonStyle}>Rejouer</button>
 					<button onClick={handleReturnToLobby} style={buttonStyle}>Retour au Lobby</button>
 				</>
-			) : isWinner ? (
-				<>
-					<h1 style={{ ...textStyle, fontSize: 48, marginBottom: 20 }}>🎉 Vous avez gagné !</h1>
-					<button onClick={handleReturnToLobby} style={buttonStyle}>Retour au Lobby</button>
-				</>
-			) : !winner ? (
-				<>
-					<h1 style={{ ...textStyle, fontSize: 48, marginBottom: 20 }}>💀 Game Over</h1>
-					<p style={{ ...textStyle, fontSize: 24 }}>Le jeu est terminé, vous n'êtes pas le gagnant.</p>
-				</>
 			) : (
 				<>
-					<h1 style={{ ...textStyle, fontSize: 48, marginBottom: 20 }}>💀 Game Over</h1>
 					<p style={{ ...textStyle, marginBottom: 10 }}>
-						{isHost ? 'Vous êtes host, mais vous avez été éliminé.' : 'Vous êtes éliminé.'}
+						{isWinner
+							? 'Félicitations, vous êtes le dernier survivant !'
+							: isHost
+								? 'Vous êtes host, mais vous avez été éliminé.'
+								: 'Vous êtes éliminé.'}
 					</p>
 					<button onClick={handleReturnToLobby} style={buttonStyle}>Retour au Lobby</button>
 				</>
 			)}
 		</div>
 	);
+
 }
 
 const buttonStyle = {

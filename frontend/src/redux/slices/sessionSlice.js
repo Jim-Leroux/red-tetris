@@ -8,7 +8,7 @@ const initialState = {
 	players: [],
 	spectres: {},
 	serverGrid: null,
-	winner: false
+	isWinner: false
 };
 
 const sessionSlice =  createSlice({
@@ -52,6 +52,8 @@ const sessionSlice =  createSlice({
 			state.isSolo = false;
 			state.players = [];
 			state.spectres = {};
+			state.serverGrid = null;
+			state.isWinner = false;
 		},
 		applyPenaltyToSpectre(state, action) {
 			const { username, count, holes } = action.payload;
@@ -74,7 +76,7 @@ const sessionSlice =  createSlice({
 			spectre.grid = newGrid;
 		},
 		setWinner(state, action) {
-			state.winner = action.payload;
+			state.isWinner = action.payload;
 		}
 
 	},

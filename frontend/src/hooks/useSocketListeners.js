@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { pushPieceToQueue, setActivePiece, setIsStarted, setSetting } from "../redux/slices/gameSlice";
+import { pushPieceToQueue, setActivePiece, setGameOver, setIsStarted, setSetting } from "../redux/slices/gameSlice";
 import { addPlayers, applyPenaltyToSpectre, setPlayers, setServerGrid, setSpectre, setWinner } from "../redux/slices/sessionSlice";
 import { useSocket } from "../context/WebSocketContext";
 import { getNamePiece } from "../logic/tetriminos";
@@ -64,19 +64,11 @@ export default function useSocketListeners() {
 		});
 
 		socket.on('gameEnded', () => {
-			dispatch(setIsStarted(false));
-			dispatch(setActivePiece(null));
-			dispatch(setPlayers([]));
-			dispatch(setServerGrid(null));
-			dispatch(setSpectre({ player: me, spectre: null }));
+			dispatch(setGameOver(true));
 			dispatch(setWinner(true));
 		})
 		socket.on('gameOver', ()=> {
-			dispatch(setIsStarted(false));
-			dispatch(setServerGrid(null));
-			dispatch(setSpectre({ player: me, spectre: null }));
-			dispatch(setPlayers([]));
-			dispatch(setActivePiece(null));
+			dispatch(setGameOver(true));
 			dispatch(setWinner(false));
 		})
 
