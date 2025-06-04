@@ -8,6 +8,7 @@ import GameSolo from './pages/GameSolo';
 import { useSocket } from './context/WebSocketContext';
 import { useDispatch } from 'react-redux';
 import { resetSession } from './redux/slices/sessionSlice';
+import { setpieceQueue } from './redux/slices/gameSlice';
 
 function App() {
 	const navigate = useNavigate();
@@ -34,6 +35,7 @@ function App() {
 			if (location.pathname === "/") {
 				socket.emit("leave");
 				dispatch(resetSession())
+				dispatch(setpieceQueue([]));
 			}
 	}, [location.pathname, socket]);
 

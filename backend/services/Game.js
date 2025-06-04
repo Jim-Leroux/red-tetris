@@ -1,7 +1,9 @@
-const { createGame } = require('../game/engine');
-const { createGrid } = require('../game/grid');
-const { getRandomPiece } = require('../game/tetriminos');
+const Game = require('../game/games');
+
+const Piece = require('../game/piece');
+const Player = require('./player');
 const { rooms} = require('./room');
+
 
 function addPlayerToRoom(socketId, username, room) {
   let isHost = false;
@@ -11,42 +13,17 @@ function addPlayerToRoom(socketId, username, room) {
       players: {},
       sequence: [],
       settings: {},
-	  pieceQueue: [],
+      pieceQueue: [],
       game: null,
-	  isStart: false,
+      isStart: false,
     };
   }
 
-  rooms[room].players[socketId] = {
-    username,
-    socketId,
-    grid: createGrid(),
-    currentPiece: null,
-    pieceX: 3,
-    pieceY: 0,
-	isAlive: true,
-	pieceIndex: 0,
-  };
+  rooms[room].players[socketId] = new Player(socketId, username);
 
   return isHost;
 }
 
-// function removePlayer(socketId) {
-//   for (const room in rooms) {
-//     if (rooms[room].players[socketId]) {
-//       const playerCount = Object.keys(rooms[room].players).length;
-//       delete rooms[room].players[socketId];
-
-//       if (playerCount === 1) {
-//         rooms[room].game?.stop();
-//         delete rooms[room];
-//       }
-
-//       return room;
-//     }
-//   }
-//   return null;
-// }
 
 
 
@@ -54,31 +31,27 @@ function startGame(io, room) {
   const roomObj = rooms[room];
   if (!roomObj) return;
 
-  // Générer une séquence partagée de pièces
-  roomObj.sequence = Array.from({ length: 100 }, () => getRandomPiece());
+
+  roomObj.sequence = Array.from({ length: 100 }, () => Piece.getRandomPiece());
   const firstPiece = roomObj.sequence[0];
-	Object.values(roomObj.players).forEach(player => {
-	  player.currentPiece = JSON.parse(JSON.stringify(firstPiece));
-	  player.pieceX = 3;
-	  player.pieceY = 0;
-	  player.pieceIndex = 0; // ← on commence tous à 0
-	});
-	// console.log("First piece", firstPiece);
 
-  // Envoyer la première pièce à tous les joueurs
 
-	io.to(room).emit('piece', firstPiece);
-	io.to(room).emit('queue', roomObj.sequence.slice(1, 6));
-  // Créer et démarrer le moteur de jeu
-  const game = createGame(io, room, roomObj.players, roomObj.sequence);
+  Object.values(roomObj.players).forEach(player => {
+    player.assignFirstPiece(firstPiece);
+  });
+
+  io.to(room).emit('piece', firstPiece);
+  io.to(room).emit('queue', roomObj.sequence.slice(1, 6));
+
+
+  const game = new Game(io, room, roomObj.players, roomObj.sequence);
   roomObj.game = game;
-   game.start();
+  game.start();
 }
 
 
 
 module.exports = {
   addPlayerToRoom,
-//   removePlayer,
   startGame,
 };
