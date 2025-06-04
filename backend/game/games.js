@@ -119,10 +119,10 @@ class Game {
 				const { newGrid, linesCleared } = clearLines(player.grid);
 				player.grid = newGrid;
 
-				if (linesCleared >= 1) {
+				if (linesCleared >= 2) {
 					for (const otherId in this.players) {
 						if (otherId !== socketId && this.players[otherId].isAlive) {
-							const { grid: updatedGrid, holes } = addPenaltyLines(this.players[otherId].grid, linesCleared);
+							const { grid: updatedGrid, holes } = addPenaltyLines(this.players[otherId].grid, linesCleared - 1);
 							this.players[otherId].grid = updatedGrid;
 
 							const displayGrid = renderPieceInGrid(
