@@ -5,7 +5,7 @@ class Player {
 		this.socketId = socketId;
 		this.username = username;
 		this.grid = createGrid();
-		this.currentPiece = null; // 👈 Important : pas de pièce avant le démarrage
+		this.currentPiece = null;
 		this.pieceX = 3;
 		this.pieceY = 0;
 		this.pieceIndex = 0;

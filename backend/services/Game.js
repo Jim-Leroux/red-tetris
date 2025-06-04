@@ -54,6 +54,5 @@ function startGame(io, room) {
 
 module.exports = {
   addPlayerToRoom,
-//   removePlayer,
   startGame,
 };
