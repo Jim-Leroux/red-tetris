@@ -115,13 +115,12 @@ describe('Game class', () => {
 	test('tick() kills player if no room for new piece', () => {
 		const p = players['socket1'];
 
-		// Blocage total en haut (4 lignes)
+
 		p.grid = Array.from({ length: 20 }, () => Array(10).fill(0));
 		for (let y = 0; y < 4; y++) {
 			p.grid[y] = Array(10).fill({ name: 'block', option: {} });
 		}
 
-		// Forcer fixation en bas
 		p.currentPiece = {
 			name: 'I',
 			shape: [[1]],
@@ -143,7 +142,6 @@ describe('Game class', () => {
 
 		p2.isAlive = false;
 
-		// Mock de `emit`
 		const emitMock = jest.fn();
 		io.to = jest.fn(() => ({ emit: emitMock }));
 

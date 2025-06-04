@@ -4,11 +4,10 @@ const Player = require("../services/player");
 const Game = require("../game/games");
 const Piece = require("../game/piece");
 
-jest.mock("../game/games"); // on mocke Game pour ne pas démarrer un vrai tick
+jest.mock("../game/games");
 
 describe("games logic", () => {
   beforeEach(() => {
-    // Reset l'état global rooms avant chaque test
     for (const key in rooms) delete rooms[key];
     Game.mockClear();
   });
@@ -28,7 +27,7 @@ describe("games logic", () => {
   });
 
   test("startGame initializes game and emits data", () => {
-    // Mock io
+
     const io = {
       to: jest.fn(() => ({
         emit: jest.fn()
@@ -37,12 +36,11 @@ describe("games logic", () => {
 
     addPlayerToRoom("s1", "Bob", "roomX");
 
-    // On espionne la méthode assignFirstPiece
     const spy = jest.spyOn(Player.prototype, "assignFirstPiece");
 
     startGame(io, "roomX");
 
-    // Assertions
+
     const roomObj = rooms["roomX"];
     expect(roomObj.sequence).toHaveLength(100);
     expect(roomObj.game).toBeInstanceOf(Game);

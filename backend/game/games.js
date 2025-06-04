@@ -141,7 +141,6 @@ class Game {
 					}
 				}
 
-				// Nouvelle pièce
 				player.pieceIndex = (player.pieceIndex ?? 0) + 1;
 				if (this.sequence.length <= player.pieceIndex + 5) {
 					const extra = Array.from({ length: 50 }, () => Piece.getRandomPiece());

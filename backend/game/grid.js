@@ -31,7 +31,7 @@ function isValidMove(grid, piece, posX, posY) {
           newY >= ROWS ||
           newX < 0 ||
           newX >= COLS ||
-          // Bloquant si c'est une cellule non vide (objet) ou une pénalité (9)
+
           (typeof grid[newY][newX] === 'object' || grid[newY][newX] === 9)
         ) {
           return false;
@@ -114,7 +114,7 @@ function calculateSpectre(grid) {
 }
 
 function addPenaltyLines(grid, count) {
-  const newGrid = grid.slice(count); // enlève les lignes du haut
+  const newGrid = grid.slice(count); 
   const holes = [];
 
   for (let i = 0; i < count; i++) {

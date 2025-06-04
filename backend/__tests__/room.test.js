@@ -11,7 +11,7 @@ const {
 describe("room service functions", () => {
 
   beforeEach(() => {
-    // Reset rooms object before each test
+
     for (const key in rooms) delete rooms[key];
   });
 

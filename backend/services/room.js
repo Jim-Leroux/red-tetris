@@ -63,8 +63,6 @@ function removePlayer(socketId) {
   if (!room || !rooms[room] || !rooms[room].players[socketId]) return false;
 
   delete rooms[room].players[socketId];
-
-  // Si plus aucun joueur → supprimer la room
   if (Object.keys(rooms[room].players).length === 0) {
     removeRoom(room);
   }
